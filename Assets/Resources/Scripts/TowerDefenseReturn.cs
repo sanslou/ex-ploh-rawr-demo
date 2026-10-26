@@ -1,6 +1,8 @@
 
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.SceneManagement;
+
 
 public class TowerDefenseReturn : MonoBehaviour
 {
@@ -28,5 +30,11 @@ public class TowerDefenseReturn : MonoBehaviour
             PlayerPrefs.SetInt("Chapter1_TowerDefenseWon", 0);
             PlayerPrefs.Save();
         }
+    }
+
+    public void ProceedToChapter2()
+    {
+        Time.timeScale = 1f;
+        SceneManager.LoadScene("LTV2");
     }
 }

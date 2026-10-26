@@ -56,7 +56,17 @@ public class ButtonSmash : MonoBehaviour
         }
         GameObject spawnedVFX = Instantiate(smashPrefab);
         GameObject sfx_swing = Resources.Load<GameObject>("Prefabs/Minigames Only/SFX_MCSwordHeavy");
-        GameObject spawnedSFX = Instantiate(sfx_swing);
+        if (sfx_swing != null)
+        {
+            GameObject spawnedSFX = Instantiate(sfx_swing);
+            Destroy(spawnedSFX, 3f);
+        }
+        else
+        {
+            Debug.LogError(
+                "ButtonSmash: SFX_MCSwordHeavy prefab is missing from Resources!"
+            );
+        }
 
         spawnedVFX.transform.SetParent(parent, false); // Set parent to attack pivot.
 
@@ -71,6 +81,6 @@ public class ButtonSmash : MonoBehaviour
         spawnedVFX.transform.localRotation = Quaternion.identity;  // Makes it so that there is a lack of movement-based rotation.  
 
         Destroy(spawnedVFX, vfxLifetime);
-        Destroy(spawnedSFX, 3f);
+        
     }
 }

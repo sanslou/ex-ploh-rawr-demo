@@ -3454,7 +3454,8 @@ Transform:
   m_LocalPosition: {x: 1.8070002, y: 0.49697998, z: 0.07379997}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 1810096611}
   m_Father: {fileID: 1515228105}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &421130937
@@ -3592,6 +3593,26 @@ MonoBehaviour:
     onActionInvoked:
       m_PersistentCalls:
         m_Calls: []
+  - actionType: 6
+    characterTarget: 1
+    npc: {fileID: 0}
+    dialogue: I guess you need some light in your life.
+    autoAdvanceDialogue: 0
+    speakerTarget: 0
+    speakerNPC: {fileID: 0}
+    voiceLine: {fileID: 0}
+    voiceVolume: 1
+    destination: {fileID: 1810096611}
+    moveSpeed: 0
+    stoppingDistance: 0
+    faceTarget: {fileID: 0}
+    waitSeconds: 0
+    targetAlpha: 1
+    fadeDuration: 5
+    targetCamera: {fileID: 0}
+    onActionInvoked:
+      m_PersistentCalls:
+        m_Calls: []
   - actionType: 0
     characterTarget: 1
     npc: {fileID: 0}
@@ -3599,8 +3620,8 @@ MonoBehaviour:
     autoAdvanceDialogue: 0
     speakerTarget: 0
     speakerNPC: {fileID: 0}
-    voiceLine: {fileID: 0}
-    voiceVolume: 0
+    voiceLine: {fileID: 8300000, guid: b051702afc61d004ab67235c2a8d3a97, type: 3}
+    voiceVolume: 1
     destination: {fileID: 0}
     moveSpeed: 0
     stoppingDistance: 0
@@ -5024,6 +5045,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 3197194743130275168, guid: e46d53245bcc6e54ab6e3c7b9da8a580, type: 3}
+      propertyPath: quizType
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3197194743130275168, guid: e46d53245bcc6e54ab6e3c7b9da8a580, type: 3}
       propertyPath: QAs.Array.size
       value: 5
       objectReference: {fileID: 0}
@@ -5480,7 +5505,7 @@ MonoBehaviour:
     autoAdvanceDialogue: 0
     speakerTarget: 0
     speakerNPC: {fileID: 0}
-    voiceLine: {fileID: 8300000, guid: e0261560068a1544c9bda57e094dcee9, type: 3}
+    voiceLine: {fileID: 8300000, guid: e2410615ee52d3248ba8ec26dad169c4, type: 3}
     voiceVolume: 1
     destination: {fileID: 0}
     moveSpeed: 0
@@ -5961,6 +5986,14 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 3197194743130275168, guid: e46d53245bcc6e54ab6e3c7b9da8a580, type: 3}
+      propertyPath: isEntity
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3197194743130275168, guid: e46d53245bcc6e54ab6e3c7b9da8a580, type: 3}
+      propertyPath: quizType
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3197194743130275168, guid: e46d53245bcc6e54ab6e3c7b9da8a580, type: 3}
       propertyPath: isPretest
       value: 1
       objectReference: {fileID: 0}
@@ -6151,7 +6184,7 @@ PrefabInstance:
     - target: {fileID: 3197194743130275168, guid: e46d53245bcc6e54ab6e3c7b9da8a580, type: 3}
       propertyPath: onQuizFinished.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 864961474}
+      objectReference: {fileID: 1262918073}
     - target: {fileID: 3197194743130275168, guid: e46d53245bcc6e54ab6e3c7b9da8a580, type: 3}
       propertyPath: onQuizFinished.m_PersistentCalls.m_Calls.Array.data[1].m_Target
       value: 
@@ -6166,7 +6199,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3197194743130275168, guid: e46d53245bcc6e54ab6e3c7b9da8a580, type: 3}
       propertyPath: onQuizFinished.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: Ch2BadGoodCutscenePlay
+      value: OnPreTestFinished
       objectReference: {fileID: 0}
     - target: {fileID: 3197194743130275168, guid: e46d53245bcc6e54ab6e3c7b9da8a580, type: 3}
       propertyPath: onQuizFinished.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
@@ -6174,7 +6207,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3197194743130275168, guid: e46d53245bcc6e54ab6e3c7b9da8a580, type: 3}
       propertyPath: onQuizFinished.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: OBJ_CMD, Assembly-CSharp
+      value: Chapter2Manager, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 3197194743130275168, guid: e46d53245bcc6e54ab6e3c7b9da8a580, type: 3}
       propertyPath: onQuizFinished.m_PersistentCalls.m_Calls.Array.data[1].m_TargetAssemblyTypeName
@@ -11141,6 +11174,9 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  preTestConsole: {fileID: 864961474}
+  goodAfterPreTest: {fileID: 635592465}
+  badAfterPreTest: {fileID: 421130938}
 --- !u!1001 &1280250441
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -15976,6 +16012,37 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 02a606026609d164e898a8b9a02032c3, type: 3}
+--- !u!1 &1810096610
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1810096611}
+  m_Layer: 0
+  m_Name: FallHere
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1810096611
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1810096610}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -10.82, y: 3.566, z: 1.06}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 421130936}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1814868615 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 3197194743130275168, guid: e46d53245bcc6e54ab6e3c7b9da8a580, type: 3}
@@ -17446,6 +17513,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3197194743130275168, guid: e46d53245bcc6e54ab6e3c7b9da8a580, type: 3}
+      propertyPath: quizType
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3197194743130275168, guid: e46d53245bcc6e54ab6e3c7b9da8a580, type: 3}
       propertyPath: QAs.Array.size
       value: 4
       objectReference: {fileID: 0}
@@ -18752,7 +18823,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerInteract
   isExplorationScene: 0
-  SPEED: 3
+  SPEED: 5
   isMirrored: 0
   characterController: {fileID: 2130196798}
   mobileController: {fileID: 1028472781}
