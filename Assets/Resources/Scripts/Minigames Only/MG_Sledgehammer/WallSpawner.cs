@@ -383,14 +383,23 @@ public class WallSpawner : MonoBehaviour
             activeWalls.Add(wall);
         }
         GameObject sfx = Resources.Load<GameObject>("Prefabs/Minigames Only/SFX_MovingStone");
-        GameObject spawnedSFX = Instantiate(sfx);
+
+        if (sfx != null)
+        {
+            GameObject spawnedSFX = Instantiate(sfx);
+            Destroy(spawnedSFX, 3f);
+        }
+        else
+        {
+            Debug.LogWarning("WallSpawner: SFX_MovingStone prefab not found in Resources.");
+        }
+
         formationsThisWave++;
 
         if (formationsThisWave >= wave.spawnsRequired)
         {
             AdvanceWave();
         }
-        Destroy(spawnedSFX, 3f);
     }
 
     private void AdvanceWave() // Per wave.

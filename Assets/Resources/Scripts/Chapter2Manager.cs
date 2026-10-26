@@ -3,10 +3,53 @@ using UnityEngine.Events;
 
 public class Chapter2Manager : MonoBehaviour
 {
+    [Header("Chapter 2 Exploration")]
     [SerializeField] private GameObject childrenParent;
     [SerializeField] private UnityEvent onAllChildrenInactive = new UnityEvent();
 
     private bool allChildrenEventInvoked;
+    [Header("Chapter 2 Intro Cutscenes")]
+    [SerializeField] private OBJ_CMD preTestConsole;
+
+    [SerializeField] private Cutscene goodAfterPreTest;
+    [SerializeField] private Cutscene badAfterPreTest;
+
+    public void OnPreTestFinished()
+    {
+        if (preTestConsole == null)
+        {
+            Debug.LogError(
+                "Chapter2Manager: PreTest console is missing!"
+            );
+            return;
+        }
+
+        Cutscene selectedCutscene;
+
+        if (preTestConsole.hasFailed)
+        {
+            selectedCutscene = badAfterPreTest;
+        }
+        else
+        {
+            selectedCutscene = goodAfterPreTest;
+        }
+
+        if (selectedCutscene == null)
+        {
+            Debug.LogError(
+                "Chapter2Manager: Selected cutscene is missing!"
+            );
+            return;
+        }
+
+        if (!selectedCutscene.gameObject.activeInHierarchy)
+        {
+            selectedCutscene.gameObject.SetActive(true);
+        }
+
+        selectedCutscene.PlayCutscene();
+    }
 
     private void Update()
     {

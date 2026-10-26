@@ -638,8 +638,8 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 100}
-  m_LocalScale: {x: 1080, y: 540, z: 1200}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 67.07, y: 67.07, z: 67.07}
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 549352326}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -692,7 +692,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 3696afb0a284c9c43853c7bc814722b7, type: 3}
   m_Color: {r: 0.63522005, g: 0.63522005, b: 0.63522005, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -1905,13 +1905,13 @@ RectTransform:
   m_Children:
   - {fileID: 244707100}
   - {fileID: 424625121}
-  - {fileID: 1274641725}
   - {fileID: 689843216}
   - {fileID: 556751410}
   - {fileID: 1985788773}
   - {fileID: 2087476652}
   - {fileID: 1839416350}
   - {fileID: 1557361451}
+  - {fileID: 1274641725}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -2030,8 +2030,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -40, y: -44.100006}
-  m_SizeDelta: {x: 160, y: 30}
+  m_AnchoredPosition: {x: -121.44998, y: -44.050003}
+  m_SizeDelta: {x: 322.7, y: 30.1}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &556751411
 MonoBehaviour:
@@ -2145,7 +2145,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &689843216
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3722,7 +3722,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 549352330}
         m_TargetAssemblyTypeName: MainMenu, Assembly-CSharp
-        m_MethodName: ClickPlay
+        m_MethodName: ClickContinue
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

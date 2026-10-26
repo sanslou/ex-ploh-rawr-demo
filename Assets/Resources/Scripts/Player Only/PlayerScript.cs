@@ -79,13 +79,58 @@ public class PlayerInteract : MonoBehaviour
     SceneManager.GetActiveScene().name == "Tutorial" ||
     SceneManager.GetActiveScene().name == "LTV2")
         {
+
+            string[] requiredTags =
+{
+    "UI_Interact",
+    "UI_Dialogue",
+    "UI_Joystick",
+    "MainCamera",
+    "UI_DialoguePrev",
+    "UI_DialogueNext",
+    "Canvas_Player"
+};
+
+            foreach (string tagName in requiredTags)
+            {
+                GameObject found = GameObject.FindGameObjectWithTag(tagName);
+
+                if (found == null)
+                {
+                    Debug.LogError("PlayerInteract: Missing GameObject with tag: " + tagName);
+                }
+                else
+                {
+                    Debug.Log("PlayerInteract: Found " + tagName + " -> " + found.name);
+                }
+            }
+
+            string[] requiredObjects =
+            {
+    "Terminal Multiple",
+    "Terminal Identify",
+    "Terminal Trivia",
+    "Terminal Ready",
+    "Terminal Results"
+};
+
+            foreach (string objectName in requiredObjects)
+            {
+                GameObject found = GameObject.Find(objectName);
+
+                if (found == null)
+                {
+                    Debug.LogError("PlayerInteract: Missing GameObject: " + objectName);
+                }
+            }
+
             buttonInteract = GameObject.FindGameObjectWithTag("UI_Interact").GetComponent<Button>();
             inputField = GameObject.FindGameObjectWithTag("UI_Dialogue").GetComponent<TMP_InputField>();
 
             PlayerInteract.UI_INTERACT = buttonInteract;
             PlayerInteract.UI_DIALOGUE = inputField;
             PlayerInteract.UI_JOYSTICK = GameObject.FindGameObjectWithTag("UI_Joystick").GetComponent<Image>();
-            PlayerInteract.PLAYER_CAMERA = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
+            VerifyPlayerMainCamera();
 
             PlayerInteract.UI_DIALOGUE_PREV = GameObject.FindGameObjectWithTag("UI_DialoguePrev").GetComponent<Button>();
             PlayerInteract.UI_DIALOGUE_NEXT = GameObject.FindGameObjectWithTag("UI_DialogueNext").GetComponent<Button>();
@@ -126,6 +171,49 @@ public class PlayerInteract : MonoBehaviour
         //Debug.Log(target);
     }
 
+    private void VerifyPlayerMainCamera()
+    {
+        PlayerInteract.PLAYER_CAMERA = null;
+        GameObject[] mainCameras = GameObject.FindGameObjectsWithTag("MainCamera");
+
+        if (mainCameras.Length > 1)
+        {
+            Debug.LogError(
+                "PlayerInteract: Multiple active GameObjects have the MainCamera tag! Found "
+                + mainCameras.Length + ". Only the gameplay camera should use this tag."
+            );
+        }
+
+        if (mainCameras.Length == 0)
+        {
+            Debug.LogError("PlayerInteract: No active MainCamera found!");
+        }
+        else
+        {
+            GameObject selectedCamera = null;
+
+            foreach (GameObject cameraObject in mainCameras)
+            {
+                if (cameraObject.name == "Main Camera")
+                {
+                    selectedCamera = cameraObject;
+                    break;
+                }
+            }
+
+            if (selectedCamera == null)
+            {
+                selectedCamera = mainCameras[0];
+            }
+
+            PlayerInteract.PLAYER_CAMERA = selectedCamera.GetComponent<Camera>();
+
+            if (PlayerInteract.PLAYER_CAMERA == null)
+            {
+                Debug.LogError("PlayerInteract: Selected MainCamera has no Camera component!");
+            }
+        }
+    }
     private void CharacterMove()
     {
         moveVector = Vector3.zero;
@@ -137,11 +225,11 @@ public class PlayerInteract : MonoBehaviour
 
         if (characterController != null)
         {
-            characterController.SimpleMove(moveVector);
+            characterController.SimpleMove(moveVector); 
         }
 
         //characterController.Move(moveVector * Time.deltaTime); // without gravity
-        characterController.SimpleMove(moveVector); // with gravity
+        //characterController.SimpleMove(moveVector); // with gravity
 
         // Save location
         if (SceneManager.GetActiveScene().name == "InGame") // saves the position ONLY inside ingame
@@ -149,7 +237,7 @@ public class PlayerInteract : MonoBehaviour
             PlayerPrefs.SetFloat("PlayerX", transform.position.x);
             PlayerPrefs.SetFloat("PlayerY", transform.position.y);
             PlayerPrefs.SetFloat("PlayerZ", transform.position.z);
-            PlayerPrefs.Save();
+            //PlayerPrefs.Save();
         }
 
         Transform playerSprite = transform.Find("Player Sprite");

@@ -56,6 +56,10 @@ public class Slideshow : MonoBehaviour
         slideshowCanvas = ssObject.GetComponent<Canvas>();
 
         spawnScript = playerSpawn.GetComponent<PlayerSpawnPoint>();
+        if (spawnScript == null)
+        {
+            spawnScript = GameObject.Find("PlayerSpawnPoint").GetComponent<PlayerSpawnPoint>();
+        }
         
 
         buttonNext.onClick.AddListener(NextSlide);

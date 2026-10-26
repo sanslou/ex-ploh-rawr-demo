@@ -17,25 +17,28 @@ public class OBJ_CMD : NPC
             Identify = 10s
             Fact = 5s
      */
-    [Header("Flashcards")] // Flashcards automatically gather every OBJ_CMD GameObject's inspector elements for the entire scene. as long as "collectIncorrectFlashcards" is enabled in the Unity hierarchy
-    [Min(1)] public int flashcardChapter = 1;
-    [SerializeField] private bool collectIncorrectFlashcards = false; 
+    public enum QuizType
+    {
+        Regular,
+        PreTest,
+        RandomEncounter,
+        PostTest
+    }
+
+    [Header("Universal Quiz Configuration")]
+    [SerializeField] private QuizType quizType = QuizType.Regular;
+
+    [Header("Flashcards")]
+    [Min(1)] public int flashcardChapter = 1; // Flashcards automatically gather every OBJ_CMD GameObject's inspector elements for the entire scene. 
+
     private readonly List<QA> incorrectFlashcardQuestions = new List<QA>();
 
-    [SerializeField] private bool isChapter1Pretest = false;
-
-    [Header("Universal Chapter Assessments (For Ch.2 and Beyond)")]
-    [SerializeField] private bool isPretest = false;
-    [SerializeField] private bool isRandomEncounter = false;
-
-    [Header("Random Encounter (Uncheck ALL if Ch.2 and Beyond)")]
-    [SerializeField] private bool isChapter1RandomEncounter = false;
-    public bool isRandomEncounterConsole = false;
     private readonly List<OBJ_CMD> encounterConsoles = new List<OBJ_CMD>();
     private int nextConsoleIndex = 0;
 
+
+
     [Header("Check this if console is post-test or pre-test")]
-    [SerializeField] private bool loadAllQuizzes = false; // if false, load the encountered/collected questions only.
     [SerializeField] private UnityEvent onQuizFinished;
 
     public static bool IsQuizOngoing { get; private set; }
@@ -62,10 +65,12 @@ public class OBJ_CMD : NPC
 
     public async override void Interact() {
         IsQuizOngoing = true;
-        if (isPretest && loadAllQuizzes)
+        if (quizType == QuizType.PreTest ||
+            quizType == QuizType.PostTest)
         {
-            LoadChapterQuestions(); // force to load
+            LoadChapterQuestions();
         }
+
         Canvas player = GameObject.FindGameObjectWithTag("Canvas_Player").GetComponent<Canvas>();
         player.enabled = false;
         Canvas readypage = GameObject.Find("Terminal Ready").GetComponent<Canvas>();
@@ -78,7 +83,8 @@ public class OBJ_CMD : NPC
         TMP_Text score = readypage.transform.Find("Saved Score").GetComponent<TMP_Text>();
         count.text = $"{QAs.Count}";
         timed.text = (isTimed) ? ("YES") : ("NO");
-        score.text = $"Saved Score {this.score}/{QAs.Count}";
+        //score.text = $"Saved Score {this.score}/{QAs.Count}";
+        score.text = $"High Score {GetHighScore()}/{QAs.Count}"; // high score system: GetHighScoreKey(), GetHighScore(), SaveHighScore()
 
         bool isReady = await ReadyQuiz(); // ask before proceeding
         if (isReady)
@@ -92,22 +98,79 @@ public class OBJ_CMD : NPC
         }
     }
 
+
+    private string GetHighScoreKey()
+    {
+        return GetQuizSaveKey() + "_" + quizType + "_HighScore";
+    }
+
+    private int GetHighScore()
+    {
+        return PlayerPrefs.GetInt(GetHighScoreKey(), 0);
+    }
+
+    private void SaveHighScore()
+    {
+        int previousHighScore = GetHighScore();
+
+        if (score > previousHighScore)
+        {
+            PlayerPrefs.SetInt(GetHighScoreKey(), score);
+            PlayerPrefs.Save();
+
+            Debug.Log(
+                "OBJ_CMD: New high score! " +
+                score + "/" + QAs.Count
+            );
+        }
+    }
+
     private void RecordFlashcardFailure(QA qa)
     {
-        if (!collectIncorrectFlashcards &&
-            !isChapter1Pretest &&
-            !isChapter1RandomEncounter &&
-            !isPretest &&
-            !isRandomEncounter)
+        if (quizType == QuizType.Regular)
         {
             return;
         }
 
-        if (qa != null && !incorrectFlashcardQuestions.Contains(qa))
+        if (qa == null)
+        {
+            return;
+        }
+
+        if (!incorrectFlashcardQuestions.Contains(qa))
         {
             incorrectFlashcardQuestions.Add(qa);
         }
     }
+
+
+    public void StartAssessment()
+    {
+        Debug.Log("Starting assessment: " + gameObject.name);
+
+        if (quizType != QuizType.PreTest &&
+            quizType != QuizType.PostTest)
+        {
+            Debug.LogWarning(
+                "OBJ_CMD: StartAssessment() requires PreTest or PostTest."
+            );
+            return;
+        }
+
+        LoadChapterQuestions();
+
+        if (QAs.Count <= 0)
+        {
+            Debug.LogWarning(
+                "OBJ_CMD: No questions available for " +
+                gameObject.scene.name
+            );
+            return;
+        }
+
+        Interact();
+    }
+    /*
     public void StartPostTest() // DESPITE ITS NAME, IT IS ALSO USED FOR PRETEST. (isPretest must be true and loadallquizzes is true too)
     {
         Debug.Log("StartPostTest called on: " + gameObject.name);
@@ -119,7 +182,7 @@ public class OBJ_CMD : NPC
         }
 
         Interact();
-    }
+    }*/
 
     public void ChooseOneREConsole()
     {
@@ -140,7 +203,7 @@ public class OBJ_CMD : NPC
 
                 foreach (OBJ_CMD console in consoles)
                 {
-                    if (console.isRandomEncounterConsole)
+                    if (console.quizType == QuizType.RandomEncounter)
                     {
                         encounterConsoles.Add(console);
                     }
@@ -194,55 +257,74 @@ public class OBJ_CMD : NPC
             encounterConsoles[randomIndex] = temporary;
         }
     }
+
     private void LoadChapterQuestions()
     {
-        Debug.Log("LoadChapterQuestions called! Chapter: " + flashcardChapter);
-        ExplorerFlashcardStore.RegisterLoadedQuizzes();
-        QAs.Clear();
+        List<QA> collectedQuestions = new List<QA>();
 
-        OBJ_CMD[] quizzes = FindObjectsByType<OBJ_CMD>(FindObjectsInactive.Include,FindObjectsSortMode.None);
+        GameObject[] roots = gameObject.scene.GetRootGameObjects();
 
-        foreach (OBJ_CMD quiz in quizzes)
+        foreach (GameObject root in roots)
         {
-            Debug.Log(
-                "Found OBJ_CMD: " + quiz.gameObject.name +
-                " | Chapter: " + quiz.flashcardChapter +
-                " | Questions: " + quiz.QAs.Count +
-                " | Random Encounter: " + quiz.isRandomEncounterConsole
-            );
-            if (quiz == this || quiz.flashcardChapter != flashcardChapter) 
-            {
-                continue;
-            }
+            OBJ_CMD[] consoles =
+                root.GetComponentsInChildren<OBJ_CMD>(true);
 
-            if (quiz.QAs == null || quiz.QAs.Count == 0)
+            foreach (OBJ_CMD console in consoles)
             {
-                continue;
-            }
-
-            if (loadAllQuizzes)
-            {
-                QAs.AddRange(quiz.QAs);
-            }
-            else
-            {
-                if (PlayerPrefs.GetInt(quiz.GetQuizSaveKey(), 0) == 1)
+                if (console == this)
                 {
-                    QAs.AddRange(quiz.QAs);
+                    continue;
+                }
+
+                if (console.quizType != QuizType.RandomEncounter)
+                {
+                    continue;
+                }
+
+                if (console.QAs == null)
+                {
+                    continue;
+                }
+
+                foreach (QA qa in console.QAs)
+                {
+                    if (qa == null)
+                    {
+                        continue;
+                    }
+
+                    if (!collectedQuestions.Contains(qa))
+                    {
+                        collectedQuestions.Add(qa);
+                    }
                 }
             }
         }
 
-        Debug.Log("Post-test loaded " + QAs.Count +" questions. Load All: " + loadAllQuizzes);
+        QAs.Clear();
+        QAs.AddRange(collectedQuestions);
+
+        ExplorerFlashcardStore.RegisterQuestions(
+            flashcardChapter,
+            QAs
+        );
+
+        Debug.Log(
+            "OBJ_CMD: " + gameObject.scene.name +
+            " | Quiz Type: " + quizType +
+            " | Loaded Questions: " + QAs.Count
+        );
     }
-    private void SaveChapter1AssessmentScore()
+
+
+    private void SaveChapterAssessmentScore()
     {
         if (QAs.Count <= 0)
         {
             return;
         }
 
-        if (isPretest)
+        if (quizType == QuizType.PreTest)
         {
             ChapterDifficulty.SavePretest(
                 flashcardChapter,
@@ -250,7 +332,7 @@ public class OBJ_CMD : NPC
                 QAs.Count
             );
         }
-        else if (isRandomEncounter)
+        else if (quizType == QuizType.RandomEncounter)
         {
             ChapterDifficulty.SaveRandomEncounter(
                 flashcardChapter,
@@ -258,7 +340,16 @@ public class OBJ_CMD : NPC
                 QAs.Count
             );
         }
+        else if (quizType == QuizType.PostTest)
+        {
+            string key = "Chapter" + flashcardChapter + "_PostTest_";
+
+            PlayerPrefs.SetInt(key + "Correct", score);
+            PlayerPrefs.SetInt(key + "Total", QAs.Count);
+            PlayerPrefs.Save();
+        }
     }
+
     public Task<bool> ReadyQuiz()
     {
         GameObject ready = GameObject.Find("Button Ready");
@@ -342,8 +433,9 @@ public class OBJ_CMD : NPC
         animator.SetBool("isAnswering", false);
         //Debug.Log(score >= (QAs.Count / 2));
         animator.SetBool("isPassed", this.score > (QAs.Count / 2));
-        
+
         SaveQuizEncounter();
+        SaveHighScore();
         ShowResult();
 
         //Debug.Log("Quiz Done");
@@ -353,7 +445,13 @@ public class OBJ_CMD : NPC
 
     public bool hasFailed = false;
     public void ShowResult() {
-        ExplorerFlashcardStore.CollectFailures(flashcardChapter,incorrectFlashcardQuestions);
+
+        ExplorerFlashcardStore.RecordAssessmentFailures(
+            flashcardChapter,
+            quizType,
+            incorrectFlashcardQuestions
+        );
+
 
         incorrectFlashcardQuestions.Clear();
         Canvas res = GameObject.Find("Terminal Results").GetComponent<Canvas>();
@@ -444,23 +542,6 @@ public class OBJ_CMD : NPC
         player.enabled = true;
 
         //Debug.Log("Done result");
-        
-        GameObject cutscenesObject = GameObject.Find("Cutscenes");
-
-        if (cutscenesObject != null)
-        {
-            CutsceneManager manager = cutscenesObject.GetComponent<CutsceneManager>();
-            if (manager != null)
-            {
-                if (flashcardChapter == 1 &&
-                (isChapter1Pretest || isPretest) &&
-                !manager.cutscenesFinished)
-                {
-                    StartCutscene();
-                    Debug.Log("Playing next cutscene..");
-                }
-            }
-        }
 
         ShowCloseButton();
         if (closeTransform != null)
@@ -505,7 +586,7 @@ public class OBJ_CMD : NPC
         {
             interact.gameObject.SetActive(true);
         }
-        SaveChapter1AssessmentScore();
+        SaveChapterAssessmentScore();
         onQuizFinished?.Invoke();
     }
 
@@ -796,6 +877,29 @@ public class OBJ_CMD : NPC
         GameObject.Find("True Answer").GetComponent<Button>().onClick.AddListener(() => OnClick(GameObject.Find("True Answer").GetComponent<Button>()));
         GameObject.Find("False Answer").GetComponent<Button>().onClick.AddListener(() => OnClick(GameObject.Find("False Answer").GetComponent<Button>()));
         return buttonClickTask.Task;
+    }
+
+    private List<OBJ_CMD> GetAllRandomEncounterConsoles()
+    {
+        List<OBJ_CMD> consoles = new List<OBJ_CMD>();
+
+        GameObject[] roots = gameObject.scene.GetRootGameObjects();
+
+        foreach (GameObject root in roots)
+        {
+            OBJ_CMD[] allCmds =
+                root.GetComponentsInChildren<OBJ_CMD>(true);
+
+            foreach (OBJ_CMD cmd in allCmds)
+            {
+                if (cmd.quizType == QuizType.RandomEncounter)
+                {
+                    consoles.Add(cmd);
+                }
+            }
+        }
+
+        return consoles;
     }
 
 }

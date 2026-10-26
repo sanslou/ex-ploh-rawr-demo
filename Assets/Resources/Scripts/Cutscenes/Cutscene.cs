@@ -907,7 +907,7 @@ public class Cutscene : MonoBehaviour
             Debug.LogWarning("Cutscene: Target Camera not assigned! (Did you assign it in the SwitchCamera action?)");
             return;
         }
-        Debug.Log("Switch cam: " +  targetCamera);
+        Debug.Log("Switch cam: " + targetCamera);
 
         // 1. Only one AudioListener can be on, so turn them all off first
         AudioListener[] listeners = FindObjectsByType<AudioListener>(FindObjectsInactive.Include, FindObjectsSortMode.None);
@@ -920,14 +920,21 @@ public class Cutscene : MonoBehaviour
             }
         }
 
-        // 2. Turn off the old camera, turn on the new one
-        if (currentCamera != null && currentCamera != targetCamera)
+        // 2. Ensure only the target camera is enabled and active
+        Camera[] allCameras = FindObjectsByType<Camera>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        foreach (Camera cam in allCameras)
         {
-            currentCamera.enabled = false;
+            if (cam == targetCamera)
+            {
+                cam.enabled = true;
+                cam.gameObject.SetActive(true);
+            }
+            else
+            {
+                cam.enabled = false;
+                cam.gameObject.SetActive(false);
+            }
         }
-
-        targetCamera.gameObject.SetActive(true);
-        targetCamera.enabled = true;
 
         // 3. Give the new camera an AudioListener
         AudioListener targetListener = targetCamera.GetComponent<AudioListener>();
