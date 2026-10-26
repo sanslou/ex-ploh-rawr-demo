@@ -62,7 +62,7 @@ public class AttackHandler : MonoBehaviour
             Resources.Load<GameObject>("Prefabs/Minigames Only/VFX_DefaultSlash");
 
         GameObject sfx =
-            Resources.Load<GameObject>("Prefabs/Minigames Only/SFX_Hit");
+            Resources.Load<GameObject>("Prefabs/Minigames Only/SFX_MCSword");
 
         Transform player = GameObject.FindWithTag("Player").transform;
 
@@ -120,9 +120,7 @@ public class AttackHandler : MonoBehaviour
         // SPAWN SFX
 
         GameObject spawnedSFX = Instantiate(
-            sfx,
-            attackPivot.position,
-            Quaternion.identity
+            sfx
         );
 
         Destroy(spawnedVFX, 0.12f);

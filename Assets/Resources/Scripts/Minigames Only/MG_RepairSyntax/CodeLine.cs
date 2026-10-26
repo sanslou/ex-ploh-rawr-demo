@@ -119,6 +119,10 @@ public class CodeLine : MonoBehaviour
             return;
 
         codeText.text = correctedCode;
+
+        GameObject sfx_writing = Resources.Load<GameObject>("Prefabs/Minigames Only/SFX_Writing");
+        GameObject spawnedSFX = Instantiate(sfx_writing);
+        Destroy(spawnedSFX, 3f);
     }
 
     public bool IsUsingData(RepairSyntaxLineData data) // Lets RSRepairUI find which physical line matches its data

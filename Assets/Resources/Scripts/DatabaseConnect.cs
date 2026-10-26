@@ -1,7 +1,7 @@
 using System;
 using System.Collections;
-using UnityEditor;
-using UnityEditor.PackageManager.Requests;
+//using UnityEditor;
+//using UnityEditor.PackageManager.Requests;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.SceneManagement;

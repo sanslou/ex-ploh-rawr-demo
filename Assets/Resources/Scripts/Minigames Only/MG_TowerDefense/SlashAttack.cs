@@ -36,6 +36,9 @@ public class SlashAttack : MonoBehaviour
             else
             {
                 Debug.Log("You've hit an enemy.");
+                GameObject sfx_gah = Resources.Load<GameObject>("Prefabs/Minigames Only/SFX_Gah");
+                GameObject spawnedSFX = Instantiate(sfx_gah);
+                Destroy(spawnedSFX, 3f);
             }
             hit = true;
         }

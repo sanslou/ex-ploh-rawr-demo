@@ -373,7 +373,7 @@ public class OBJ_CMD : NPC
         }
 
             Button done = res.transform.Find("Button Done").GetComponent<Button>();
-        done.onClick.RemoveListener(DoneResult);
+        done.onClick.RemoveAllListeners();
         done.onClick.AddListener(DoneResult);
 
 

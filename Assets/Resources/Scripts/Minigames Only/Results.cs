@@ -121,7 +121,19 @@ public class Results : MonoBehaviour
 
         Time.timeScale = 1f;
 
+
+        if (SceneManager.GetActiveScene().name == "TowerDefense")
+        {
         SceneManager.LoadScene("InGame");
+        }
+        if (SceneManager.GetActiveScene().name == "WallPushMinigame")
+        {
+            SceneManager.LoadScene("RepairSyntaxMinigame");
+        }
+        if (SceneManager.GetActiveScene().name == "RepairSyntaxMinigame")
+        {
+            SceneManager.LoadScene("LTV2");
+        }
     }
 
     public void RetryMinigame()

@@ -14,6 +14,8 @@ public class WallObstacle : MonoBehaviour
     private bool isCorrect;
     private bool isMoving = true;
     private bool hasBeenHit;
+    
+
 
     public float MoveSpeed
     {
@@ -84,11 +86,22 @@ public class WallObstacle : MonoBehaviour
         if (isCorrect)
         {
             Destroy(gameObject);
+            GameObject sfx_crumble = Resources.Load<GameObject>("Prefabs/Minigames Only/SFX_BrickCrumble");
+            GameObject spawnedSFX = Instantiate(sfx_crumble);
+            Destroy(spawnedSFX, 2f);
         }
         else
         {
             // Prevents the repeated fail punishment from a same wall. The wall will remain active, and will continue moving
             hasBeenHit = false;
+            GameObject sfx_conflict = Resources.Load<GameObject>("Prefabs/Minigames Only/SFX_SwordCling");
+            GameObject spawnedSFX = Instantiate(sfx_conflict);
+            Destroy(spawnedSFX, 2f);
+
+            //turn red when hit
+            MaterialPropertyBlock mpb = new MaterialPropertyBlock();
+            mpb.SetColor("_BaseColor", new Color(1, 0, 0));
+            gameObject.GetComponent<MeshRenderer>().SetPropertyBlock(mpb);
         }
     }
 
