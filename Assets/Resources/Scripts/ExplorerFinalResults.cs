@@ -15,8 +15,25 @@ public class ExplorerFinalResults : MonoBehaviour
     [SerializeField] private string c1EncounterCorrect = "C1_EncounterCorrect";
     [SerializeField] private string c1EncounterTotal = "C1_EncounterTotal";
 
+    [Header("Player Name UI")]
+    [SerializeField] private Canvas nameCanvas;
+
     private void Start()
     {
+        string playerName = PlayerPrefs.GetString("Explorer_PlayerName", "");
+
+        if (nameCanvas != null)
+        {
+            if (string.IsNullOrWhiteSpace(playerName))
+            {
+                nameCanvas.enabled = true;
+            }
+            else
+            {
+                nameCanvas.enabled = false;
+            }
+        }
+
         RefreshResults();
     }
 
@@ -78,7 +95,20 @@ public class ExplorerFinalResults : MonoBehaviour
 
         StringBuilder text = new StringBuilder();
 
+        string playerName = PlayerPrefs.GetString(
+            "Explorer_PlayerName",
+            "Anonymous"
+        );
+
+        if (string.IsNullOrWhiteSpace(playerName))
+        {
+            playerName = "Anonymous";
+        }
+
         text.AppendLine("EXPLORER - FINAL RESULTS");
+        text.AppendLine("Player Name: " + playerName);
+        text.AppendLine();
+        text.AppendLine("(PLEASE TAKE A SCREENSHOT AT THE END OF THE GAME)");
         text.AppendLine();
 
         text.AppendLine("CHAPTER 1");

@@ -51,6 +51,11 @@ public class Chapter2Manager : MonoBehaviour
         selectedCutscene.PlayCutscene();
     }
 
+    public void ProceedToChapter3()
+    {
+        Time.timeScale = 1f;
+        UnityEngine.SceneManagement.SceneManager.LoadScene("AT1");
+    }
     private void Update()
     {
         if (childrenParent == null)

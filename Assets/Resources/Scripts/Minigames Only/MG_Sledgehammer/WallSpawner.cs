@@ -13,6 +13,8 @@ public class WallSpawner : MonoBehaviour
 
     [Header("Wave Data")]
     [SerializeField] private WallWaveData[] waves;
+
+    [SerializeField] private bool loadWavesFromResources = true;
     [Header("Wave Settings")]
     [SerializeField, Min(1)] private int numberOfWaves = 5;
 
@@ -87,6 +89,16 @@ public class WallSpawner : MonoBehaviour
         score = 0;
         maxScore = 0;
 
+        if (loadWavesFromResources)
+        {
+            waves = Resources.LoadAll<WallWaveData>("SledgehammerData");
+
+            Debug.Log(
+                "WallSpawner: Loaded " + waves.Length +
+                " WallWaveData assets from Resources/SledgehammerData."
+            );
+        }
+
         ApplyAdaptiveDifficulty();
 
         if (!ValidateSetup())
@@ -95,7 +107,7 @@ public class WallSpawner : MonoBehaviour
             return;
         }
 
-        totalWavesToPlay = Mathf.Clamp(numberOfWaves, 1, waves.Length);
+        totalWavesToPlay = Mathf.Max(1, numberOfWaves);
 
         Debug.Log("Sledgehammer: Playing " + totalWavesToPlay + " waves.");
 
@@ -265,12 +277,16 @@ public class WallSpawner : MonoBehaviour
 
         if (waves.Length > 1 && selectedWave != null)
         {
-            int attempts = 0;
+            int previousIndex = System.Array.IndexOf(waves, selectedWave);
 
-            while (waves[randomIndex] == selectedWave && attempts < 20)
+            if (previousIndex >= 0)
             {
-                randomIndex = Random.Range(0, waves.Length);
-                attempts++;
+                randomIndex = Random.Range(0, waves.Length - 1);
+
+                if (randomIndex >= previousIndex)
+                {
+                    randomIndex++;
+                }
             }
         }
         WallWaveData wave = waves[randomIndex];

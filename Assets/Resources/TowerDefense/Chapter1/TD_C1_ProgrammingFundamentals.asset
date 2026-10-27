@@ -1,0 +1,47 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b988c5245b2987148b5a8c127954e427, type: 3}
+  m_Name: TD_C1_ProgrammingFundamentals
+  m_EditorClassIdentifier: Assembly-CSharp::TowerDefenseQuestionSet
+  topicName: Programming Fundamentals
+  statements:
+  - originalQuestionNumber: 1
+    statement: A computer program is a sequence of instructions designed to perform
+      a task.
+    isCorrect: 1
+  - originalQuestionNumber: 1
+    statement: A computer program is only a collection of computer hardware.
+    isCorrect: 0
+  - originalQuestionNumber: 2
+    statement: Programming involves planning and creating a program.
+    isCorrect: 1
+  - originalQuestionNumber: 2
+    statement: Programming only means turning on a computer.
+    isCorrect: 0
+  - originalQuestionNumber: 3
+    statement: A computer program is a set of instructions designed to perform tasks.
+    isCorrect: 1
+  - originalQuestionNumber: 3
+    statement: Computer programs do not contain instructions.
+    isCorrect: 0
+  - originalQuestionNumber: 4
+    statement: Syntax refers to rules for writing valid programming statements.
+    isCorrect: 1
+  - originalQuestionNumber: 4
+    statement: Syntax refers to the physical speed of a computer.
+    isCorrect: 0
+  - originalQuestionNumber: 5
+    statement: Commands are program statements that carry out tasks.
+    isCorrect: 1
+  - originalQuestionNumber: 5
+    statement: Commands are hardware devices used to store files.
+    isCorrect: 0

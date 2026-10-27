@@ -2435,6 +2435,7 @@ MonoBehaviour:
   waves:
   - {fileID: 11400000, guid: a4437241827372b40b52a8d62af457a4, type: 2}
   - {fileID: 11400000, guid: c9e75c6cef3377b468cf6236da9ac532, type: 2}
+  loadWavesFromResources: 1
   numberOfWaves: 5
   questionText: {fileID: 1607118452}
   waveText: {fileID: 1515529861}
@@ -3960,7 +3961,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: e024bfe11f6ba8c42b097f0fc17314b9, type: 2}
   - {fileID: 11400000, guid: 0146db673b099a0489115c43dcd0b268, type: 2}
   - {fileID: 11400000, guid: 1069214fb7d3583428fd37486e6edb67, type: 2}
-  numberOfWaves: 1
+  loadWavesFromResources: 1
+  numberOfWaves: 10
   questionText: {fileID: 1607118452}
   waveText: {fileID: 1515529861}
   useAdaptiveDifficulty: 1
@@ -4892,6 +4894,7 @@ MonoBehaviour:
   resultsScreen: {fileID: 254415197}
   waves:
   - {fileID: 11400000, guid: c9e75c6cef3377b468cf6236da9ac532, type: 2}
+  loadWavesFromResources: 1
   numberOfWaves: 5
   questionText: {fileID: 1607118452}
   waveText: {fileID: 1515529861}

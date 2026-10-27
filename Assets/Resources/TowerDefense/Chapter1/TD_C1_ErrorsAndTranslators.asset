@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b988c5245b2987148b5a8c127954e427, type: 3}
+  m_Name: TD_C1_ErrorsAndTranslators
+  m_EditorClassIdentifier: Assembly-CSharp::TowerDefenseQuestionSet
+  topicName: Translators and Errors
+  statements:
+  - originalQuestionNumber: 11
+    statement: A compiler translates program code into another form for execution.
+    isCorrect: 1
+  - originalQuestionNumber: 11
+    statement: A compiler is a device used only to print documents.
+    isCorrect: 0
+  - originalQuestionNumber: 12
+    statement: An interpreter can execute a program statement by statement.
+    isCorrect: 1
+  - originalQuestionNumber: 12
+    statement: An interpreter is used only for drawing flowcharts.
+    isCorrect: 0
+  - originalQuestionNumber: 13
+    statement: Syntax errors occur when code violates the language's grammar rules.
+    isCorrect: 1
+  - originalQuestionNumber: 13
+    statement: A missing required semicolon in Java can never cause a syntax error.
+    isCorrect: 0
+  - originalQuestionNumber: 15
+    statement: Debugging involves finding and correcting programming errors.
+    isCorrect: 1
+  - originalQuestionNumber: 15
+    statement: Debugging means deliberately adding errors to a program.
+    isCorrect: 0

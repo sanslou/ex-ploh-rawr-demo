@@ -76,6 +76,7 @@ public class MainMenu : MonoBehaviour
         main.enabled = true;
         play.enabled = false;
     }
+
     
     public void ClickPlay() {
         genderSprite.gameObject.SetActive(false);
@@ -132,10 +133,19 @@ public class MainMenu : MonoBehaviour
 
     public void ResetPlayerPrefs()
     {
+        ResetFlashcards();
         PlayerPrefs.DeleteAll();
         PlayerPrefs.Save();
 
         Debug.Log("All PlayerPrefs have been reset!");
+    }
+    public static void ResetFlashcards()
+    {
+        PlayerPrefs.DeleteKey("EXplorer_Flashcards_v1");
+        PlayerPrefs.Save();
+
+        // Also reset the in-memory flashcard collection
+        // using the actual field names in ExplorerFlashcardStore.
     }
     public void ClickBack() {
         audioSource.Play();

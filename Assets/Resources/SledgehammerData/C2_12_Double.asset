@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c0d3df335037b3d46b9c8fe70bf6b355, type: 3}
+  m_Name: "C2_12_Double"
+  m_EditorClassIdentifier: Assembly-CSharp::WallWaveData
+  waveName: "Decimal Data Type"
+  question: "Which Java data type commonly stores decimal values?"
+  spawnsRequired: 1
+  answers:
+  - answerText: "double"
+    isCorrect: 1
+  - answerText: "int"
+    isCorrect: 0
+  - answerText: "boolean"
+    isCorrect: 0
+  - answerText: "char"
+    isCorrect: 0
+  - answerText: "long"
+    isCorrect: 0

@@ -1,0 +1,41 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b988c5245b2987148b5a8c127954e427, type: 3}
+  m_Name: TD_C1_ProgrammingLanguages
+  m_EditorClassIdentifier: Assembly-CSharp::TowerDefenseQuestionSet
+  topicName: Programming Languages
+  statements:
+  - originalQuestionNumber: 6
+    statement: Machine language can be directly understood by a computer.
+    isCorrect: 1
+  - originalQuestionNumber: 6
+    statement: Java source code is directly executed by a CPU without translation.
+    isCorrect: 0
+  - originalQuestionNumber: 7
+    statement: Assembly language uses symbols and mnemonics to represent machine
+      instructions.
+    isCorrect: 1
+  - originalQuestionNumber: 7
+    statement: Assembly language consists only of natural-language paragraphs.
+    isCorrect: 0
+  - originalQuestionNumber: 8
+    statement: Low-level programming languages are closely related to hardware.
+    isCorrect: 1
+  - originalQuestionNumber: 8
+    statement: Low-level languages are designed to be independent of computer hardware.
+    isCorrect: 0
+  - originalQuestionNumber: 9
+    statement: High-level languages commonly use words that resemble natural language.
+    isCorrect: 1
+  - originalQuestionNumber: 9
+    statement: High-level languages must be written entirely in binary digits.
+    isCorrect: 0
