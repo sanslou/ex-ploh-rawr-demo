@@ -152,52 +152,51 @@ public class Enemy_TD : NPC
         target = t; // Change target
     }
 
-    public void takeDamage() // Void: Receive damage for this individual NPC. NOT Tower.
+
+    public void takeDamage()
     {
         if (isDead)
         {
             return;
         }
-        health -= towerScript.playerDamage; // One hit before death
-        Debug.Log($"{gameObject.name} took damage! {health}-hp remaining.");
-        if (health <= 0)
+
+        health -= towerScript.playerDamage;
+
+        Debug.Log(
+            gameObject.name + " took " +
+            towerScript.playerDamage +
+            " damage! " + health + " HP remaining."
+        );
+
+        if (!isEvil)
+        {
+            towerScript.towerHealth -= towerScript.allySlainDmg;
+            towerScript.updateHpBar();
+
+            Debug.LogWarning("You've hit an ALLY! OUCH!");
+
+            if (towerScript.towerHealth <= 0f)
+            {
+                towerScript.ForceResults();
+            }
+        }
+
+        if (health <= 0f)
         {
             isDead = true;
 
-            if (!isEvil)
-            {
-                towerScript.towerHealth -= towerScript.allySlainDmg;
-                towerScript.updateHpBar();
-                Debug.LogWarning("You've hit an ALLY! OUCH!");
-                if (towerScript.towerHealth <= 0f)
-                {
-                    towerScript.ForceResults();
-                }
-            }
-
-            Debug.Log($"{gameObject.name} has been defeated!");
+            Debug.Log(gameObject.name + " has been defeated!");
 
             if (isEvil)
             {
                 towerScript.RecordHostileKill();
             }
 
-            Destroy(gameObject);
             towerScript.enemyDefeated();
-            
+            Destroy(gameObject);
         }
-        //TODO: Knockback effect when taking damage (OPT)
-        //TODO: Critical chance shakes the screen and deals more damage  (OPT)
-        //TODO: Add nametag to enemy prefab and change it based on answer
-
-        if (!isEvil)
-        {
-            towerScript.towerHealth -= towerScript.allySlainDmg;
-            towerScript.updateHpBar();
-            Debug.LogWarning("You've hit an ALLY! OUCH!");
-        }
-
     }
+
 
     public void allyTowerTouch() // What further happens to an ally (fake enemy) if it touches the tower
     {

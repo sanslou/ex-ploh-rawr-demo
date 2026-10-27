@@ -151,25 +151,28 @@ public class Tower : MonoBehaviour
 
         if (difficulty == 2) // Hard
         {
-            enemyDamage = 30f;
+            enemyDamage = 25f; // 4 hits before death
             enemyDamageCritChance = 10f;
             enemyDamageCritMultiplier = 1.5f;
+            allySlainDmg = 35f;
         }
         else if (difficulty == 1) // Normal
         {
-            enemyDamage = 25f;
+            enemyDamage = 15f; // 7 hits before death
             enemyDamageCritChance = 7.5f;
             enemyDamageCritMultiplier = 1.5f;
+            allySlainDmg = 25f;
         }
         else // Easy
         {
-            enemyDamage = 20f;
+            enemyDamage = 10f; // 10 hits before death
             enemyDamageCritChance = 5f;
             enemyDamageCritMultiplier = 1.5f;
+            allySlainDmg = 17f;
         }
 
         Debug.Log(
-            "Tower Defense Difficulty: " + difficulty +
+            "Tower Defense Difficulty (2 is hardest): " + difficulty +
             " | Enemy Damage: " + enemyDamage +
             " | Crit Chance: " + enemyDamageCritChance + "%" +
             " | Crit Multiplier: " + enemyDamageCritMultiplier

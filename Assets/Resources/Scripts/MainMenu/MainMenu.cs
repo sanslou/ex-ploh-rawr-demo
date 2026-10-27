@@ -22,11 +22,23 @@ public class MainMenu : MonoBehaviour
 
     void Start()
     {
+        
         if (PlayerPrefs.GetString("AccountID") == "")
         {
             DBC.IS_GUEST_MODE = true;
-            PlayerPrefs.SetString("PlayerGender", "N");
-            PlayerPrefs.SetString("PlayerName", "");
+
+            // FIXES LACK OF GENDER BUG
+            if (!PlayerPrefs.HasKey("PlayerGender"))
+            {
+                PlayerPrefs.SetString("PlayerGender", "N");
+            }
+
+            if (!PlayerPrefs.HasKey("PlayerName"))
+            {
+                PlayerPrefs.SetString("PlayerName", "");
+            }
+
+            PlayerPrefs.Save();
         }
         else {
             DBC.IS_GUEST_MODE = false;
@@ -38,6 +50,8 @@ public class MainMenu : MonoBehaviour
              if (gender == "M") animator.runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>("Animations/PlayerMale_Controller");
         else if (gender == "F") animator.runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>("Animations/PlayerFemale_Controller");
         else                    animator.runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>("Animations/PlayerNonbinary_Controller");
+
+        Debug.Log("MainMenu: Loaded gender = " + PlayerPrefs.GetString("PlayerGender", "N"));
     }
     
     void Update(){}
@@ -116,6 +130,13 @@ public class MainMenu : MonoBehaviour
         Debug.Log("Clicked Settings");
     }
 
+    public void ResetPlayerPrefs()
+    {
+        PlayerPrefs.DeleteAll();
+        PlayerPrefs.Save();
+
+        Debug.Log("All PlayerPrefs have been reset!");
+    }
     public void ClickBack() {
         audioSource.Play();
         settings.enabled = false;
@@ -123,6 +144,7 @@ public class MainMenu : MonoBehaviour
 
         Debug.Log("Returned to main menu");
     }
+
     public void ClickFlashcards()
     {
         Debug.Log("Clicked Flashcards");

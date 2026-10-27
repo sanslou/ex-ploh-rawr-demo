@@ -27,9 +27,37 @@ public class PlayerConfig : MonoBehaviour
         shad2.enabled = PlayerPrefs.GetString("PlayerGender") == "M";
         shad3.enabled = PlayerPrefs.GetString("PlayerGender") != "M" && PlayerPrefs.GetString("PlayerGender") != "F";
 
-        maleAnim.runtimeAnimatorController = (PlayerPrefs.GetString("PlayerGender") == "M") ? (Resources.Load<RuntimeAnimatorController>("Animations/PlayerMale_Controller")) : (null);
-        femaleAnim.runtimeAnimatorController = (PlayerPrefs.GetString("PlayerGender") == "F") ? (Resources.Load<RuntimeAnimatorController>("Animations/PlayerFemale_Controller")) : (null);
-        nonBinaryAnim.runtimeAnimatorController = (PlayerPrefs.GetString("PlayerGender") != "M" && PlayerPrefs.GetString("PlayerGender") != "F") ? (Resources.Load<RuntimeAnimatorController>("Animations/PlayerNonbinary_Controller")) : (null);
+
+        //maleAnim.runtimeAnimatorController = (PlayerPrefs.GetString("PlayerGender") == "M") ? (Resources.Load<RuntimeAnimatorController>("Animations/PlayerMale_Controller")) : (null);
+        //femaleAnim.runtimeAnimatorController = (PlayerPrefs.GetString("PlayerGender") == "F") ? (Resources.Load<RuntimeAnimatorController>("Animations/PlayerFemale_Controller")) : (null);
+        //nonBinaryAnim.runtimeAnimatorController = (PlayerPrefs.GetString("PlayerGender") != "M" && PlayerPrefs.GetString("PlayerGender") != "F") ? (Resources.Load<RuntimeAnimatorController>("Animations/PlayerNonbinary_Controller")) : (null);
+
+        // FIXES GENDER BUG THAT DISALLOWS US TO CHANGE
+        string selectedGender = PlayerPrefs.GetString("PlayerGender", "N");
+
+        maleAnim.runtimeAnimatorController = null;
+        femaleAnim.runtimeAnimatorController = null;
+        nonBinaryAnim.runtimeAnimatorController = null;
+
+        if (selectedGender == "M")
+        {
+            maleAnim.runtimeAnimatorController =
+                Resources.Load<RuntimeAnimatorController>(
+                    "Animations/PlayerMale_Controller");
+        }
+        else if (selectedGender == "F")
+        {
+            femaleAnim.runtimeAnimatorController =
+                Resources.Load<RuntimeAnimatorController>(
+                    "Animations/PlayerFemale_Controller");
+        }
+        else
+        {
+            nonBinaryAnim.runtimeAnimatorController =
+                Resources.Load<RuntimeAnimatorController>(
+                    "Animations/PlayerNonbinary_Controller");
+        }
+
     }
 
     // Update is called once per frame

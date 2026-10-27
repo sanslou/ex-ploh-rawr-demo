@@ -13,6 +13,8 @@ public class WallSpawner : MonoBehaviour
 
     [Header("Wave Data")]
     [SerializeField] private WallWaveData[] waves;
+    [Header("Wave Settings")]
+    [SerializeField, Min(1)] private int numberOfWaves = 5;
 
     [Header("Question UI")]
     [SerializeField] private TMP_Text questionText;
@@ -64,6 +66,10 @@ public class WallSpawner : MonoBehaviour
     private int maxScore;
     private int currentWaveIndex;
     private int formationsThisWave;
+    private bool correctWallHitThisWave;
+    private bool allFormationsSpawned;
+    private int totalWavesToPlay;
+    private WallWaveData selectedWave;
 
     private float spawnTimer;
     private float currentSpeedMultiplier = 1f;
@@ -89,6 +95,10 @@ public class WallSpawner : MonoBehaviour
             return;
         }
 
+        totalWavesToPlay = Mathf.Clamp(numberOfWaves, 1, waves.Length);
+
+        Debug.Log("Sledgehammer: Playing " + totalWavesToPlay + " waves.");
+
         if (randomizeWaves) // randomize waves if the option is enabled
         {
             ShuffleWaves();
@@ -109,12 +119,7 @@ public class WallSpawner : MonoBehaviour
     {
         get
         {
-            if (waves == null ||
-                currentWaveIndex < 0 ||
-                currentWaveIndex >= waves.Length)
-                return null;
-
-            return waves[currentWaveIndex];
+            return selectedWave;
         }
     }
 
@@ -132,8 +137,8 @@ public class WallSpawner : MonoBehaviour
         {
             difficultyName = "Easy";
 
-            spawnInterval = 7f;
-            baseWallSpeed = 2f;
+            spawnInterval = 4f;
+            baseWallSpeed = 2.5f;
             wrongHitSpeedMultiplier = 1.10f;
             maximumSpeedMultiplier = 2f;
         }
@@ -141,8 +146,8 @@ public class WallSpawner : MonoBehaviour
         {
             difficultyName = "Normal";
 
-            spawnInterval = 6f;
-            baseWallSpeed = 2.5f;
+            spawnInterval = 3f; // 4
+            baseWallSpeed = 4f; //4
             wrongHitSpeedMultiplier = 1.15f;
             maximumSpeedMultiplier = 3f;
         }
@@ -151,8 +156,8 @@ public class WallSpawner : MonoBehaviour
             difficultyName = "Hard";
 
             // Your tested Hard settings.
-            spawnInterval = 5f;
-            baseWallSpeed = 3f;
+            spawnInterval = 2.5f;
+            baseWallSpeed = 6f;
             wrongHitSpeedMultiplier = 1.25f;
             maximumSpeedMultiplier = 4f;
         }
@@ -246,17 +251,33 @@ public class WallSpawner : MonoBehaviour
         }
     }
 
+
     private bool LoadWave(int index)
     {
-        if (index < 0 || index >= waves.Length)
+        if (waves == null || waves.Length == 0)
+        {
+            Debug.LogError("WallSpawner: No wave data assigned.");
             return false;
+        }
 
-        WallWaveData wave = waves[index];
+        // Randomly choose among the existing wave assets.
+        int randomIndex = Random.Range(0, waves.Length);
+
+        if (waves.Length > 1 && selectedWave != null)
+        {
+            int attempts = 0;
+
+            while (waves[randomIndex] == selectedWave && attempts < 20)
+            {
+                randomIndex = Random.Range(0, waves.Length);
+                attempts++;
+            }
+        }
+        WallWaveData wave = waves[randomIndex];
 
         if (wave == null || !wave.HasValidAnswers())
         {
-            Debug.LogError("WallSpawner: Wave " + (index+1) + " has invalid data. Each wave needs exactly one correct answer.");
-
+            Debug.LogError("WallSpawner: Invalid wave data selected.");
             return false;
         }
 
@@ -273,29 +294,35 @@ public class WallSpawner : MonoBehaviour
 
         if (!hasWrongAnswer)
         {
-            Debug.LogError($"Wave {index + 1} needs at least one incorrect answer.");
-
+            Debug.LogError("WallSpawner: Wave needs incorrect answers.");
             return false;
         }
 
+        selectedWave = wave;
         currentWaveIndex = index;
         formationsThisWave = 0;
+
+        correctWallHitThisWave = false;
+        allFormationsSpawned = false;
 
         if (questionText != null)
         {
             questionText.text = wave.question;
         }
-            
 
         if (waveText != null)
         {
-            waveText.text = $"Wave {index + 1}";
+            waveText.text = "Wave " + (index + 1) + "/" + numberOfWaves;
         }
-            
 
-        Debug.Log($"Started {wave.waveName}");
+        Debug.Log(
+            "Started Wave " + (index + 1) +
+            ": " + wave.waveName
+        );
+
         return true;
     }
+
 
     private void SpawnFormation()
     {
@@ -398,10 +425,40 @@ public class WallSpawner : MonoBehaviour
 
         if (formationsThisWave >= wave.spawnsRequired)
         {
-            AdvanceWave();
+            allFormationsSpawned = true;
+
+            if (correctWallHitThisWave)
+            {
+                isSpawning = false;
+                if (allFormationsSpawned)
+                {   
+                    isSpawning = false;
+                }
+                TryAdvanceWave();
+            }
+            // Otherwise, continue spawning the same wave.
         }
     }
 
+    private void TryAdvanceWave()
+    {
+        if (!allFormationsSpawned)
+        {
+            return;
+        }
+
+        if (!correctWallHitThisWave)
+        {
+            return;
+        }
+
+        if (isWaitingForNextWave)
+        {
+            return;
+        }
+
+        AdvanceWave();
+    }
     private void AdvanceWave() // Per wave.
     {
         if (isWaitingForNextWave) return;
@@ -420,7 +477,7 @@ public class WallSpawner : MonoBehaviour
 
         int nextWave = currentWaveIndex + 1;
 
-        if (nextWave >= waves.Length)
+        if (nextWave >= numberOfWaves)
         {
             Debug.Log("All waves completed. Waiting for remaining walls...");
             isSpawning = false; // Stop spawning new walls if all waves are completed
@@ -472,11 +529,17 @@ public class WallSpawner : MonoBehaviour
     {
         if (isCorrect)
         {
-            score += pointsPerCorrectHit; // increase score for correct answer
-            Debug.Log("Correct answer!");
+            score += pointsPerCorrectHit;
+
+            correctWallHitThisWave = true;
+
+            Debug.Log("Correct answer! Wave requirement fulfilled.");
+
+            TryAdvanceWave();
+
             return;
         }
-        
+
         currentSpeedMultiplier = Mathf.Min(currentSpeedMultiplier * wrongHitSpeedMultiplier,maximumSpeedMultiplier); // failure means more speed increased
 
         // This updates every active wall that's currently active

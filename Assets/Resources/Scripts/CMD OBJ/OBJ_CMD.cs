@@ -25,6 +25,8 @@ public class OBJ_CMD : NPC
         PostTest
     }
 
+    [Header("Quiz Ready Screen")]
+    [SerializeField] private bool showCloseButton = true;
     [Header("Universal Quiz Configuration")]
     [SerializeField] private QuizType quizType = QuizType.Regular;
 
@@ -76,7 +78,18 @@ public class OBJ_CMD : NPC
         Canvas readypage = GameObject.Find("Terminal Ready").GetComponent<Canvas>();
         readypage.enabled = true;
         Button buttonReady = readypage.transform.Find("Button Ready").GetComponent<Button>();
-        Button buttonClose = readypage.transform.Find("Button Close").GetComponent<Button>();
+
+        Transform closeTransform = readypage.transform.Find("Button Close");
+
+        if (closeTransform != null)
+        {
+            Button buttonClose = closeTransform.GetComponent<Button>();
+
+            if (buttonClose != null)
+            {
+                buttonClose.gameObject.SetActive(showCloseButton);
+            }
+        }
 
         TMP_Text count = readypage.transform.Find("Count Value").GetComponent<TMP_Text>();
         TMP_Text timed = readypage.transform.Find("Timed Value").GetComponent<TMP_Text>(); // timed question
@@ -350,24 +363,55 @@ public class OBJ_CMD : NPC
         }
     }
 
+
     public Task<bool> ReadyQuiz()
     {
         GameObject ready = GameObject.Find("Button Ready");
-        GameObject close = GameObject.Find("Button Close");
+
+        if (ready == null)
+        {
+            Debug.LogError("OBJ_CMD: Button Ready not found.");
+            return Task.FromResult(false);
+        }
+
         Button readyButton = ready.GetComponent<Button>();
-        Button closeButton = close.GetComponent<Button>();
+
+        Button closeButton = null;
+
+        if (showCloseButton)
+        {
+            GameObject close = GameObject.Find("Button Close");
+
+            if (close != null)
+            {
+                closeButton = close.GetComponent<Button>();
+            }
+        }
 
         quizRespond = new TaskCompletionSource<bool>();
-        void OnClick(Button btn) {
+
+        void OnClick(bool isReady)
+        {
             readyButton.onClick.RemoveAllListeners();
-            closeButton.onClick.RemoveAllListeners();
-            if (btn.GetComponentInChildren<TMP_Text>().text == "START") quizRespond.SetResult(true);
-            else                                                        quizRespond.SetResult(false);
+
+            if (closeButton != null)
+            {
+                closeButton.onClick.RemoveAllListeners();
+            }
+
+            quizRespond.TrySetResult(isReady);
         }
-        readyButton.onClick.AddListener(() => OnClick(GameObject.Find("Button Ready").GetComponent<Button>()));
-        closeButton.onClick.AddListener(() => OnClick(GameObject.Find("Button Close").GetComponent<Button>()));
+
+        readyButton.onClick.AddListener(() => OnClick(true));
+
+        if (closeButton != null)
+        {
+            closeButton.onClick.AddListener(() => OnClick(false));
+        }
+
         return quizRespond.Task;
     }
+
 
     public Task CloseReady()
     {
@@ -493,21 +537,51 @@ public class OBJ_CMD : NPC
         closeButton.GetChild(0).GetComponent<TextMeshProUGUI>().enabled = false;
 
     }
-    public void ShowCloseButton() //
+
+    public void ShowCloseButton()
     {
+        if (!showCloseButton)
+        {
+            return;
+        }
+
         GameObject readyPage = GameObject.Find("Terminal Ready");
 
         if (readyPage == null)
+        {
             return;
+        }
 
         Transform closeButton = readyPage.transform.Find("Button Close");
 
-        if (closeButton != null)
-            closeButton.GetComponentInParent<Button>().interactable = true;
-        closeButton.GetComponentInParent<Image>().enabled = true;
-        closeButton.GetComponentInChildren<TextMeshProUGUI>().enabled = true;
+        if (closeButton == null)
+        {
+            return;
+        }
 
+        Button button = closeButton.GetComponent<Button>();
+
+        if (button != null)
+        {
+            button.interactable = true;
+        }
+
+        Image image = closeButton.GetComponent<Image>();
+
+        if (image != null)
+        {
+            image.enabled = true;
+        }
+
+        TextMeshProUGUI text =
+            closeButton.GetComponentInChildren<TextMeshProUGUI>(true);
+
+        if (text != null)
+        {
+            text.enabled = true;
+        }
     }
+
 
     private string GetQuizSaveKey()
     {
@@ -543,24 +617,10 @@ public class OBJ_CMD : NPC
 
         //Debug.Log("Done result");
 
-        ShowCloseButton();
-        if (closeTransform != null)
+        if (showCloseButton && closeTransform != null)
         {
             closeTransform.gameObject.SetActive(true);
-
-            Button closeBut = closeTransform.GetComponent<Button>();
-
-            if (closeBut != null)
-            {
-                closeBut.interactable = true;
-
-                Image closeImage = closeBut.GetComponent<Image>();
-
-                if (closeImage != null)
-                {
-                    closeImage.enabled = true;
-                }
-            }
+            ShowCloseButton();
         }
         if (encounterArea != null)
         {

@@ -1,8 +1,8 @@
-
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+
 
 public class Results : MonoBehaviour
 {
@@ -76,6 +76,30 @@ public class Results : MonoBehaviour
         score = sc;
         maxScore = max;
 
+        string scene = SceneManager.GetActiveScene().name;
+        string prefix = "";
+
+        if (scene == "TowerDefense")
+        {
+            prefix = "Chapter1_TowerDefense";
+        }
+        else if (scene == "WallPushMinigame")
+        {
+            prefix = "Chapter2_Sledgehammer";
+        }
+        else if (scene == "RepairSyntaxMinigame")
+        {
+            prefix = "Chapter2_RepairSyntax";
+        }
+
+        if (prefix != "")
+        {
+            PlayerPrefs.SetInt(prefix + "_Score", score);
+            PlayerPrefs.SetInt(prefix + "_MaxScore", maxScore);
+            PlayerPrefs.SetInt(prefix + "_Failed", failed ? 1 : 0);
+            PlayerPrefs.Save();
+        }
+
         // Reset background color.
         bg.color = originalBgColor;
 
@@ -118,19 +142,20 @@ public class Results : MonoBehaviour
     public void closeResults()
     {
         resultsScreen.enabled = false;
-
         Time.timeScale = 1f;
 
+        string currentScene = SceneManager.GetActiveScene().name;
 
-        if (SceneManager.GetActiveScene().name == "TowerDefense")
+        if (currentScene == "TowerDefense")
         {
-        SceneManager.LoadScene("InGame");
+            SceneManager.LoadScene("InGame");
         }
-        if (SceneManager.GetActiveScene().name == "WallPushMinigame")
+        else if (currentScene == "WallPushMinigame")
         {
-            SceneManager.LoadScene("RepairSyntaxMinigame");
+            bool passed = gradeText.text != "F";
+            ReturnToChapter2(passed);
         }
-        if (SceneManager.GetActiveScene().name == "RepairSyntaxMinigame")
+        else if (currentScene == "RepairSyntaxMinigame")
         {
             SceneManager.LoadScene("LTV2");
         }
@@ -212,4 +237,23 @@ public class Results : MonoBehaviour
             return grade[5]; // F
         }
     }
+
+
+    public void ReturnToChapter2(bool passed)
+    {
+        if (passed)
+        {
+            PlayerPrefs.SetInt("Chapter2_SledgehammerWon", 1);
+        }
+        else
+        {
+            PlayerPrefs.SetInt("Chapter2_SledgehammerWon", 2);
+        }
+
+        PlayerPrefs.Save();
+
+        Time.timeScale = 1f;
+        SceneManager.LoadScene("LTV2");
+    }
+
 }

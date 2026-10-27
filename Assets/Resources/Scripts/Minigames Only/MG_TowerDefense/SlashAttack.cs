@@ -15,36 +15,60 @@ public class SlashAttack : MonoBehaviour
         towerScript = GameObject.FindWithTag("Tower").GetComponent<Tower>();
     }
 
-    void OnTriggerEnter(Collider other)
+
+    private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Enemy_TD"))   
+        if (hit)
         {
-            if (hit) { return; }
-            Debug.Log("SlashAttack hit an Enemy_TD! " + other.name);
-            target = other.gameObject;
-            enemyScript = target.GetComponent<Enemy_TD>();
+            return;
+        }
 
-            enemyScript.takeDamage(); // Call the TakeDamage method on the Enemy_TD script
-            
+        if (!other.CompareTag("Enemy_TD"))
+        {
+            return;
+        }
 
-            if (!enemyScript.isEvil && hit)
+        Enemy_TD enemy = other.GetComponent<Enemy_TD>();
+
+        if (enemy == null)
+        {
+            Debug.LogWarning("SlashAttack: Enemy_TD script missing!");
+            return;
+        }
+
+        hit = true;
+
+        bool isAlly = !enemy.isEvil;
+
+        Debug.Log("SlashAttack hit: " + other.name);
+
+        enemy.takeDamage();
+
+        if (isAlly)
+        {
+            towerScript.towerHealth -= towerScript.allySlainDmg;
+            towerScript.updateHpBar();
+
+            Debug.LogWarning("You've hit an ALLY! OUCH!");
+        }
+        else
+        {
+            Debug.Log("You've hit an enemy.");
+
+            GameObject sfxGah = Resources.Load<GameObject>(
+                "Prefabs/Minigames Only/SFX_Gah"
+            );
+
+            if (sfxGah != null)
             {
-                towerScript.towerHealth -= towerScript.allySlainDmg; // the tower takes damage as punishment
-                towerScript.updateHpBar();
-                Debug.LogWarning("You've hit an ALLY! OUCH!");
-            }
-            else
-            {
-                Debug.Log("You've hit an enemy.");
-                GameObject sfx_gah = Resources.Load<GameObject>("Prefabs/Minigames Only/SFX_Gah");
-                GameObject spawnedSFX = Instantiate(sfx_gah);
+                GameObject spawnedSFX = Instantiate(sfxGah);
                 Destroy(spawnedSFX, 3f);
             }
-            hit = true;
         }
     }
 
-    
+
+
 
 
 }

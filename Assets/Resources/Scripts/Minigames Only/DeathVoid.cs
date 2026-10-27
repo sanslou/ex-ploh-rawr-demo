@@ -1,6 +1,6 @@
 
 using UnityEngine;
-
+using UnityEngine.Events;
 public class DeathVoid : MonoBehaviour
 {
     [SerializeField] private GameObject player;
@@ -9,6 +9,8 @@ public class DeathVoid : MonoBehaviour
     private bool hasDied;
     [SerializeField] private GameObject resultsScreen;
     private Results resultsScript;
+    [Header("Death Events")]
+    [SerializeField] private UnityEvent onDeath;
 
     private void Start()
     {
@@ -35,6 +37,9 @@ public class DeathVoid : MonoBehaviour
             resultsScript.displayResults(0, 0, true);
             // Allow the player to restart the minigame.
             resultsScript.ShowRetry();
+
+            onDeath?.Invoke();
+
             Time.timeScale = 0f; // Freeze
         }
     }
