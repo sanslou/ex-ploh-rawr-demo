@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::WallWaveData
   waveName: int
   question: Which Java data type stores whole numbers?
-  spawnsRequired: 3
+  spawnsRequired: 1
   answers:
   - answerText: int
     isCorrect: 1

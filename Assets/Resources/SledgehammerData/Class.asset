@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::WallWaveData
   waveName: Class
   question: Which keyword declares a class in Java?
-  spawnsRequired: 3
+  spawnsRequired: 1
   answers:
   - answerText: class
     isCorrect: 1

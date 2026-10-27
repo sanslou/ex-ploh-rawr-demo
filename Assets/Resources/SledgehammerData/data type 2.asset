@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::WallWaveData
   waveName: loop
   question: Which loop checks its condition before each iteration?
-  spawnsRequired: 3
+  spawnsRequired: 1
   answers:
   - answerText: while
     isCorrect: 1
