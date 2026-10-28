@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Net;
 using TMPro;
 using Unity.VectorGraphics;
 using UnityEngine;
@@ -18,10 +19,10 @@ public class CanvasLogin : MonoBehaviour
 
 
     void Start(){
-        if (PlayerPrefs.GetInt("isAccountSaved") == 1) {
-            SceneManager.LoadScene("MainMenu");
-            return;
-        }
+        //if (PlayerPrefs.GetInt("isAccountSaved") == 1) {
+        //    SceneManager.LoadScene("MainMenu");
+        //    return;
+        //}
 
 
         inputID = transform.Find("InputField ID").GetComponent<TMP_InputField>();
@@ -32,11 +33,8 @@ public class CanvasLogin : MonoBehaviour
         textWrong.gameObject.SetActive(false);
 
     }
-
     void Update(){}
-
-
-    public void ButtonLogin() {
+        public void ButtonLogin() {
         //Debug.Log(inputID + " | " + inputPwd.text);
 
         if (inputID.text == "" || inputPwd.text == "")
@@ -66,7 +64,6 @@ public class CanvasLogin : MonoBehaviour
         PlayerPrefs.SetInt("isAccountSaved", 1);
         PlayerPrefs.Save();
 
-
         SceneManager.LoadScene("MainMenu");
     }
 
@@ -86,13 +83,22 @@ public class CanvasLogin : MonoBehaviour
         form.AddField("id", inputID.text);
         form.AddField("pwd", inputPwd.text);
 
-        using (UnityWebRequest www = UnityWebRequest.Post("http://localhost/Explorer/login_student.php", form))
-        {
-            yield return www.SendWebRequest();
+        // Old format (only applicable to Editor)
+        // http://localhost/Explorer/game_script.php
+        // New format (now applies to )
+        // http://192.168.1.8/Explorer/php%20stuffs/login_student.php
+        // http://{IP.ADDRESS}/Explorer/php%20/game_login_student_php
+
+        string link = (DBC.IP_ADDRESS == "") ? ("http://localhost/Explorer/php%20stuffs/game_login_student.php") : ($"http://{DBC.IP_ADDRESS}/Explorer/php%20stuffs/login_student.php");
+        //Debug.Log(link);
+
+        UnityWebRequest www = UnityWebRequest.Post(link, form);
+        www.certificateHandler = new AcceptAllCertificatesHandler();
+        yield return www.SendWebRequest();
 
             if (www.result != UnityWebRequest.Result.Success)
             {
-                //Debug.LogError("Error: " + www.error);
+                Debug.LogError("Error: " + www.error);
                 textWrong.text = noConn;
                 textWrong.gameObject.SetActive(true);
             }
@@ -100,33 +106,25 @@ public class CanvasLogin : MonoBehaviour
             {
                 string state = www.downloadHandler.text;
                 Debug.Log(state);
-                if (state != "FAIL") 
+                if (state != "FAIL")
                 {
                     //Debug.Log("Login Success");
 
                     if (PlayerPrefs.GetInt("isAccountSaved") != 1) // not saved; aka first time logging in or log-out at some point
                     {
                         string[] fields = state.Split('|');
-                        string getID, getPwd, getFN, getMN, getLN, getSec;
-                        string getPN, getPG;
+                        Debug.Log(fields.Length);
+                        string getID, getPwd, getPN;
                         getID = fields[0];
                         getPwd = fields[1];
-                        getFN = fields[2];
-                        getMN = fields[3];
-                        getLN = fields[4];
-                        getSec = fields[5];
-                        // --
-                        getPN = fields[6];
-                        getPG = fields[7];
+                        getPN = fields[2];
+                        
 
                         PlayerPrefs.SetString("AccountID", getID);
                         PlayerPrefs.SetString("AccountPwd", getPwd);
-                        PlayerPrefs.SetString("AccountFN", getFN);
-                        PlayerPrefs.SetString("AccountMN", getMN);
-                        PlayerPrefs.SetString("AccountLN", getLN);
-                        PlayerPrefs.SetString("AccountSec", getSec);
                         PlayerPrefs.SetString("PlayerName", getPN);
-                        PlayerPrefs.SetString("PlayerGender", getPG);
+
+                        
                         PlayerPrefs.SetInt("isAccountSaved", 1);
                         PlayerPrefs.Save();
                     }
@@ -140,8 +138,12 @@ public class CanvasLogin : MonoBehaviour
                     textWrong.gameObject.SetActive(true);
                 }
 
-                
-            }
         }
+    }
+
+
+    // Only Local and debugging
+    public void ButtonSettings() {
+        SceneManager.LoadScene("IP");
     }
 }

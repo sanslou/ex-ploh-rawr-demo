@@ -1,7 +1,5 @@
 using System;
 using System.Collections;
-//using UnityEditor;
-//using UnityEditor.PackageManager.Requests;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
@@ -26,8 +24,13 @@ public class DBC : MonoBehaviour
      * isAccountSaved (not an option, just there to keep track of)
      * MusicVolume
      * SFXVolume
+     * ---
+     * IPaddress
      * 
      */
+
+    // Local Only
+    public static string IP_ADDRESS = "";
 
     // Is Guest-Mode
     public static bool IS_GUEST_MODE;
@@ -49,6 +52,7 @@ public class DBC : MonoBehaviour
     void Start()
     {
         //UnityWebRequest request = UnityWebRequest.Get("http://localhost/Explorer/home.html");
+        IP_ADDRESS = "";
         StartCoroutine(Connect());
     }
  
@@ -56,10 +60,13 @@ public class DBC : MonoBehaviour
 
     IEnumerator Connect() {
         WWWForm form = new WWWForm();
-        form.AddField("username", "PlayerOne"); // useless, oh well
 
         // http://localhost/Explorer/game_script.php
-        using (UnityWebRequest www = UnityWebRequest.Post("http://localhost/Explorer/login_student.php", form))
+        // http://192.168.1.8/Explorer/login_student.php
+
+        string link = (IP_ADDRESS == "") ? ("http://localhost/Explorer/php%20stuffs/game_login_student.php") : ($"http://{IP_ADDRESS}/Explorer/php%20stuffs/game_login_student.php");
+
+        using (UnityWebRequest www = UnityWebRequest.Post(link, form))
         {
             yield return www.SendWebRequest();
 
