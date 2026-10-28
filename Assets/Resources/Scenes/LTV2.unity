@@ -1047,33 +1047,21 @@ MonoBehaviour:
   onCutsceneFinished:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: OBJ_CMD, Assembly-CSharp
-        m_MethodName: ChooseOneREConsole
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: OBJ_CMD, Assembly-CSharp
-        m_MethodName: HideCloseButton
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
       - m_Target: {fileID: 1262918070}
         m_TargetAssemblyTypeName: UnityEngine.AudioSource, UnityEngine
         m_MethodName: Stop
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1003073319}
+        m_TargetAssemblyTypeName: OBJ_CMD, Assembly-CSharp
+        m_MethodName: Interact
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -3322,6 +3310,7 @@ MonoBehaviour:
   c1PreTotal: C1_PretestTotal
   c1EncounterCorrect: C1_EncounterCorrect
   c1EncounterTotal: C1_EncounterTotal
+  nameCanvas: {fileID: 0}
 --- !u!224 &284651750
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3609,33 +3598,21 @@ MonoBehaviour:
   onCutsceneFinished:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: OBJ_CMD, Assembly-CSharp
-        m_MethodName: ChooseOneREConsole
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: OBJ_CMD, Assembly-CSharp
-        m_MethodName: HideCloseButton
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
       - m_Target: {fileID: 1262918070}
         m_TargetAssemblyTypeName: UnityEngine.AudioSource, UnityEngine
         m_MethodName: Stop
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 438765986}
+        m_TargetAssemblyTypeName: OBJ_CMD, Assembly-CSharp
+        m_MethodName: Interact
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -5400,33 +5377,21 @@ MonoBehaviour:
   onCutsceneFinished:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: OBJ_CMD, Assembly-CSharp
-        m_MethodName: ChooseOneREConsole
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: OBJ_CMD, Assembly-CSharp
-        m_MethodName: HideCloseButton
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
       - m_Target: {fileID: 1262918070}
         m_TargetAssemblyTypeName: UnityEngine.AudioSource, UnityEngine
         m_MethodName: Stop
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 627387246}
+        m_TargetAssemblyTypeName: OBJ_CMD, Assembly-CSharp
+        m_MethodName: Interact
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -6676,6 +6641,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e46d53245bcc6e54ab6e3c7b9da8a580, type: 3}
+--- !u!114 &438765986 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3197194743130275168, guid: e46d53245bcc6e54ab6e3c7b9da8a580, type: 3}
+  m_PrefabInstance: {fileID: 438765985}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dda48712df8acf6488a97eb561af7a2b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::OBJ_CMD
 --- !u!1 &449255459
 GameObject:
   m_ObjectHideFlags: 0
@@ -8598,6 +8574,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e46d53245bcc6e54ab6e3c7b9da8a580, type: 3}
+--- !u!114 &627387246 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3197194743130275168, guid: e46d53245bcc6e54ab6e3c7b9da8a580, type: 3}
+  m_PrefabInstance: {fileID: 627387245}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dda48712df8acf6488a97eb561af7a2b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::OBJ_CMD
 --- !u!1 &635592462
 GameObject:
   m_ObjectHideFlags: 0
@@ -14519,6 +14506,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e46d53245bcc6e54ab6e3c7b9da8a580, type: 3}
+--- !u!114 &1003073319 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3197194743130275168, guid: e46d53245bcc6e54ab6e3c7b9da8a580, type: 3}
+  m_PrefabInstance: {fileID: 1003073318}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dda48712df8acf6488a97eb561af7a2b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::OBJ_CMD
 --- !u!1 &1017194844
 GameObject:
   m_ObjectHideFlags: 0
@@ -15934,6 +15932,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e46d53245bcc6e54ab6e3c7b9da8a580, type: 3}
+--- !u!114 &1130245399 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3197194743130275168, guid: e46d53245bcc6e54ab6e3c7b9da8a580, type: 3}
+  m_PrefabInstance: {fileID: 1130245398}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dda48712df8acf6488a97eb561af7a2b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::OBJ_CMD
 --- !u!1 &1138291498
 GameObject:
   m_ObjectHideFlags: 0
@@ -21870,33 +21879,21 @@ MonoBehaviour:
   onCutsceneFinished:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: OBJ_CMD, Assembly-CSharp
-        m_MethodName: ChooseOneREConsole
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: OBJ_CMD, Assembly-CSharp
-        m_MethodName: HideCloseButton
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
       - m_Target: {fileID: 1262918070}
         m_TargetAssemblyTypeName: UnityEngine.AudioSource, UnityEngine
         m_MethodName: Stop
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1130245399}
+        m_TargetAssemblyTypeName: OBJ_CMD, Assembly-CSharp
+        m_MethodName: Interact
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
