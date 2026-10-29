@@ -55,6 +55,23 @@ public static class ChapterProgression
         );
     }
 
+    public static void DebugMilestones(string profile)
+    {
+        foreach (string milestone in chapter1Milestones)
+        {
+            bool completed =
+                PlayerPrefs.GetInt(GetKey(profile, milestone), 0) == 1;
+
+            if (completed)
+            {
+                Debug.Log("COMPLETE: " + milestone);
+            }
+            else
+            {
+                Debug.LogWarning("MISSING: " + milestone);
+            }
+        }
+    }
     public static float GetPercentage(string profile)
     {
         int completed = 0;

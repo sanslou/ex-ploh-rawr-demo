@@ -128,6 +128,11 @@ public class EncounterQuestionLoader : MonoBehaviour
                 yield break;
             }
 
+            Debug.Log(
+                "RAW QUESTION RESPONSE:\n" +
+                request.downloadHandler.text
+            );
+
             QuestionResponse response;
 
             try

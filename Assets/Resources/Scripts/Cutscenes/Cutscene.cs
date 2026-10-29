@@ -521,7 +521,9 @@ public class Cutscene : MonoBehaviour
                         progressionProfile,
                         progressMilestoneId.Trim()
                     );
+                    
                 }
+                //ChapterProgression.DebugMilestones(progressionProfile);
             }
 
             onCutsceneFinished.Invoke();
