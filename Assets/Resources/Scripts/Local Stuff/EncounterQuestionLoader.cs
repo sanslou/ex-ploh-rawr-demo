@@ -96,16 +96,20 @@ public class EncounterQuestionLoader : MonoBehaviour
 
         isLoading = true;
 
-        string separator = "?";
+        string host = "localhost";
 
-        if (endpointUrl.Contains("?"))
+        if (!string.IsNullOrWhiteSpace(DBC.IP_ADDRESS))
         {
-            separator = "&";
+            host = DBC.IP_ADDRESS.Trim();
         }
 
-        string url = endpointUrl + separator +
-            "first=" + firstQuestionId +
+        string url =
+            "http://" + host +
+            "/Explorer/php%20stuffs/get_encounter_questions.php" +
+            "?first=" + firstQuestionId +
             "&last=" + lastQuestionId;
+
+        Debug.Log("EncounterQuestionLoader: Requesting " + url);
 
         using (UnityWebRequest request = UnityWebRequest.Get(url))
         {
@@ -239,8 +243,7 @@ public class EncounterQuestionLoader : MonoBehaviour
 
     private bool ValidateConfiguration()
     {
-        if (string.IsNullOrWhiteSpace(endpointUrl) ||
-            firstQuestionId < 1 ||
+        if (firstQuestionId < 1 ||
             lastQuestionId < firstQuestionId ||
             targetConsoles.Count == 0)
         {
@@ -320,7 +323,7 @@ public class EncounterQuestionLoader : MonoBehaviour
 
             return null;
         }
-
+    
 
         // 0 = MultipleChoices, 1 = Trivia, 2 = Identify.
         List<int> questionTypes = new List<int>();

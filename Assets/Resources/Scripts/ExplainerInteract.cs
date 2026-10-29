@@ -8,7 +8,7 @@ public class ExplainerInteract : NPC
     [SerializeField]
     [TextArea(2,5)]
     public List<String> dialogue = new List<String>();
-    [SerializeField] private float nextDialogueCooldown = 1.5f;
+    [SerializeField] private float nextDialogueCooldown = 2.5f;
     private int index;
     private float nextDialogueTime;
     new void Start()

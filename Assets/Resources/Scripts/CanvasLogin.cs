@@ -89,7 +89,17 @@ public class CanvasLogin : MonoBehaviour
         // http://192.168.1.8/Explorer/php%20stuffs/login_student.php
         // http://{IP.ADDRESS}/Explorer/php%20/game_login_student_php
 
-        string link = (DBC.IP_ADDRESS == "") ? ("http://localhost/Explorer/php%20stuffs/game_login_student.php") : ($"http://{DBC.IP_ADDRESS}/Explorer/php%20stuffs/login_student.php");
+        string host = "localhost";
+
+        if (!string.IsNullOrWhiteSpace(DBC.IP_ADDRESS))
+        {
+            host = DBC.IP_ADDRESS.Trim();
+        }
+
+        string link = "http://" + host +
+            "/Explorer/php%20stuffs/game_login_student.php";
+
+        Debug.Log("Login URL: " + link);
         //Debug.Log(link);
 
         UnityWebRequest www = UnityWebRequest.Post(link, form);
@@ -98,9 +108,9 @@ public class CanvasLogin : MonoBehaviour
 
             if (www.result != UnityWebRequest.Result.Success)
             {
-                Debug.LogError("Error: " + www.error);
-                textWrong.text = noConn;
-                textWrong.gameObject.SetActive(true);
+                Debug.LogError("Error: " + www.error);  
+                textWrong.text = noConn + " \nError: " + www.error;
+            textWrong.gameObject.SetActive(true);
             }
             else
             {
