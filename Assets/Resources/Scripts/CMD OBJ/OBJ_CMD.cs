@@ -43,6 +43,25 @@ public class OBJ_CMD : NPC
     [Header("Check this if console is post-test or pre-test")]
     [SerializeField] private UnityEvent onQuizFinished;
 
+    [Header("Random Encounter Recording")]
+    [SerializeField] private string encounterId;
+
+    [System.Serializable]
+    private class RandomEncounterScoreRecord
+    {
+        public string attempt_id;
+        public string student_id;
+        public int chapter_id;
+        public string encounter_id;
+        public int correct_answers;
+        public int total_questions;
+        public string completed_at_utc;
+        public string quiz_type;
+    }
+
+    private RandomEncounterScoreRecord currentEncounterRecord;
+    private int completedQuestionCount;
+
 
     public static bool IsQuizOngoing { get; private set; }
 
@@ -117,7 +136,79 @@ public class OBJ_CMD : NPC
         }
     }
 
+    private void BeginEncounterRecord()
+    {
+        currentEncounterRecord = null;
+        completedQuestionCount = 0;
 
+        if (quizType == QuizType.Regular)
+        {
+            return;
+        }
+
+        if (DBC.IS_GUEST_MODE)
+        {
+            Debug.Log("Guest encounter: no student score record prepared.");
+            return;
+        }
+
+        string studentId =
+            PlayerPrefs.GetString("AccountID", "").Trim();
+
+        if (string.IsNullOrEmpty(studentId) ||
+            string.IsNullOrWhiteSpace(encounterId))
+        {
+            Debug.LogWarning(
+                "Cannot prepare encounter record: missing AccountID or Encounter ID.",
+                this
+            );
+            return;
+        }
+
+        currentEncounterRecord = new RandomEncounterScoreRecord
+        {
+            attempt_id = System.Guid.NewGuid().ToString("N"),
+            student_id = studentId,
+            chapter_id = flashcardChapter,
+            encounter_id = encounterId.Trim(),
+            quiz_type = quizType.ToString(),
+            total_questions = QAs.Count
+        };
+    }
+
+    private void FinishEncounterRecord()
+    {
+        if (currentEncounterRecord == null)
+        {
+            return;
+        }
+
+        if (currentEncounterRecord.total_questions <= 0 ||
+            completedQuestionCount != currentEncounterRecord.total_questions)
+        {
+            Debug.LogWarning(
+                "Encounter record not prepared: not all questions were completed.",
+                this
+            );
+
+            currentEncounterRecord = null;
+            return;
+        }
+
+        currentEncounterRecord.correct_answers = score;
+        currentEncounterRecord.completed_at_utc =
+            System.DateTime.UtcNow.ToString("o");
+
+        string json = JsonUtility.ToJson(currentEncounterRecord, true);
+
+        Debug.Log(
+    "ASSESSMENT RECORD — PREVIEW ONLY:\n" + json,
+    this
+);
+
+        // Later: pass this record to the database submission system.
+        currentEncounterRecord = null;
+    }
     private string GetHighScoreKey()
     {
         return GetQuizSaveKey() + "_" + quizType + "_HighScore";
@@ -212,6 +303,7 @@ public class OBJ_CMD : NPC
     public void ChooseOneREConsole()
     {
         // Gather consoles in the scene's hierarchy order.
+        Debug.Log("RE: ChooseOneREConsole called.", this);
         if (encounterConsoles.Count == 0)
         {
             GameObject[] roots = gameObject.scene.GetRootGameObjects();
@@ -267,6 +359,14 @@ public class OBJ_CMD : NPC
 
         OBJ_CMD selectedConsole = encounterConsoles[nextConsoleIndex];
         nextConsoleIndex++;
+
+        Debug.Log(
+    "RE: Selected " + selectedConsole.name +
+    " | Active: " + selectedConsole.gameObject.activeInHierarchy +
+    " | QuestionsReady: " + selectedConsole.QuestionsReady +
+    " | Question count: " + selectedConsole.QAs.Count,
+    selectedConsole
+);
 
         selectedConsole.Interact();
     }
@@ -447,7 +547,8 @@ public class OBJ_CMD : NPC
     {
         IsQuizOngoing = true;
         score = 0;
-        
+        BeginEncounterRecord();
+
         incorrectFlashcardQuestions.Clear();
         ExplorerFlashcardStore.RegisterQuestions(flashcardChapter, QAs);
         animator.SetBool("isAnswering", true);
@@ -480,8 +581,10 @@ public class OBJ_CMD : NPC
                 ui = null;
                 break;
             }
+            completedQuestionCount++;
+
             ui.enabled = true;
-            
+
             await Awaitable.WaitForSecondsAsync(1.0f);
             ui.enabled = false;
         }
@@ -490,10 +593,11 @@ public class OBJ_CMD : NPC
         //Debug.Log(score >= (QAs.Count / 2));
         animator.SetBool("isPassed", this.score > (QAs.Count / 2));
 
+        FinishEncounterRecord();
+
         SaveQuizEncounter();
         SaveHighScore();
         ShowResult();
-
         //Debug.Log("Quiz Done");
         //if (ui != null) { ui.enabled = false; }
         //player.enabled = true;

@@ -101,6 +101,15 @@ public class Cutscene : MonoBehaviour
     [Header("Events")]
     [SerializeField] private UnityEvent onCutsceneFinished = new UnityEvent();
 
+    [Header("Cutscene Completion")]
+    [SerializeField] private string cutsceneId;
+    [SerializeField] private string progressMilestoneId;
+
+    private string progressionProfile;
+
+    private bool previouslyFinished;
+    private string watchedSaveKey;
+
     // Fetch References
     private GameObject joystickBG;
     private GameObject buttonPrev;
@@ -338,6 +347,35 @@ public class Cutscene : MonoBehaviour
             findPlayer();
         }
 
+        previouslyFinished = false;
+        watchedSaveKey = "";
+
+        if (!string.IsNullOrWhiteSpace(cutsceneId))
+        {
+            string profile = "guest";
+
+            if (!DBC.IS_GUEST_MODE)
+            {
+                string accountId = PlayerPrefs.GetString("AccountID", "").Trim();
+
+                if (!string.IsNullOrEmpty(accountId))
+                {
+                    profile = "student:" + accountId;
+                }
+            }
+
+            progressionProfile = profile;
+            watchedSaveKey = "EXplorer_CutsceneWatched_" +
+                Uri.EscapeDataString(profile) + "_" +
+                Uri.EscapeDataString(cutsceneId.Trim());
+
+            previouslyFinished = PlayerPrefs.GetInt(watchedSaveKey, 0) == 1;
+        }
+        else
+        {
+            Debug.LogWarning("Cutscene: Assign a unique Cutscene ID on " + name);
+        }
+
         StartCoroutine(PlaySequence());
     }
 
@@ -472,8 +510,23 @@ public class Cutscene : MonoBehaviour
 
         if (completed)
         {
+            if (!string.IsNullOrEmpty(watchedSaveKey))
+            {
+                PlayerPrefs.SetInt(watchedSaveKey, 1);
+                PlayerPrefs.Save();
+
+                if (!string.IsNullOrWhiteSpace(progressMilestoneId))
+                {
+                    ChapterProgression.Complete(
+                        progressionProfile,
+                        progressMilestoneId.Trim()
+                    );
+                }
+            }
+
             onCutsceneFinished.Invoke();
         }
+
     }
 
     public void HidePlayerUI()
@@ -629,7 +682,9 @@ public class Cutscene : MonoBehaviour
         yield return StartCoroutine(TypePlayerDialogue(action.dialogue));
 
         // 4. Wait until the voice line finishes
-        if (voiceAudioSource != null && action.voiceLine != null)
+        if (!previouslyFinished &&
+            voiceAudioSource != null &&
+            action.voiceLine != null)
         {
             while (voiceAudioSource.isPlaying)
             {

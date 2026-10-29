@@ -1071,6 +1071,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  cutsceneId: C2_Encounter_Podium
 --- !u!1 &28423501
 GameObject:
   m_ObjectHideFlags: 0
@@ -3622,6 +3623,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  cutsceneId: C2_Encounter_Tools
 --- !u!4 &290193798 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3925934479963633849, guid: d09b75314c4902a4ba60b4900106840e, type: 3}
@@ -5392,6 +5394,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  cutsceneId: C2_Pretest_Bad
 --- !u!1 &422190115
 GameObject:
   m_ObjectHideFlags: 0
@@ -5530,6 +5533,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  cutsceneId: C2_Encounter_Crown
 --- !u!4 &422190117
 Transform:
   m_ObjectHideFlags: 0
@@ -8961,6 +8965,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  cutsceneId: C2_Pretest_Good
 --- !u!1 &658616982
 GameObject:
   m_ObjectHideFlags: 0
@@ -11252,6 +11257,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  cutsceneId: C2_AllEncounters_Finished
 --- !u!82 &836932385
 AudioSource:
   m_ObjectHideFlags: 0
@@ -13003,6 +13009,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  cutsceneId: C2_AfterPretest
 --- !u!1 &893451667
 GameObject:
   m_ObjectHideFlags: 0
@@ -16972,6 +16979,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 1
         m_CallState: 2
+  cutsceneId: 
 --- !u!82 &1255496785
 AudioSource:
   m_ObjectHideFlags: 0
@@ -18797,6 +18805,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 1
         m_CallState: 2
+  cutsceneId: C2_AllEncounters_Notification
 --- !u!1 &1457379687
 GameObject:
   m_ObjectHideFlags: 0
@@ -21811,6 +21820,26 @@ MonoBehaviour:
   - actionType: 0
     characterTarget: 1
     npc: {fileID: 858092083}
+    dialogue: '- END OF CHAPTER 2 -'
+    autoAdvanceDialogue: 0
+    speakerTarget: 0
+    speakerNPC: {fileID: 0}
+    voiceLine: {fileID: 0}
+    voiceVolume: 0
+    destination: {fileID: 667350429}
+    moveSpeed: 0
+    stoppingDistance: 0
+    faceTarget: {fileID: 0}
+    waitSeconds: 0
+    targetAlpha: 0
+    fadeDuration: 0
+    targetCamera: {fileID: 0}
+    onActionInvoked:
+      m_PersistentCalls:
+        m_Calls: []
+  - actionType: 0
+    characterTarget: 1
+    npc: {fileID: 858092083}
     dialogue: ( It is time for the post-test that will measure everything you've
       learned during this chapter. Your scores will be recorded for evaluation. )
     autoAdvanceDialogue: 0
@@ -21847,6 +21876,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  cutsceneId: C2_Minigame_Win
 --- !u!82 &1692584761
 AudioSource:
   m_ObjectHideFlags: 0
@@ -22562,6 +22592,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  cutsceneId: C2_Encounter_PotsVases
 --- !u!1 &1756128530
 GameObject:
   m_ObjectHideFlags: 0
@@ -23956,6 +23987,7 @@ MonoBehaviour:
   onCutsceneFinished:
     m_PersistentCalls:
       m_Calls: []
+  cutsceneId: 
 --- !u!82 &1916404507
 AudioSource:
   m_ObjectHideFlags: 0
@@ -27019,6 +27051,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  cutsceneId: C2_Intro
 --- !u!4 &2131056539
 Transform:
   m_ObjectHideFlags: 0

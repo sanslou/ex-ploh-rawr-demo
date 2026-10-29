@@ -1715,7 +1715,7 @@ MonoBehaviour:
     onActionInvoked:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 0}
+        - m_Target: {fileID: 1324960961}
           m_TargetAssemblyTypeName: OBJ_CMD, Assembly-CSharp
           m_MethodName: ChooseOneREConsole
           m_Mode: 1
@@ -1829,6 +1829,8 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  cutsceneId: C1_Encounter
+  progressMilestoneId: encounter_intro
 --- !u!1 &163149984
 GameObject:
   m_ObjectHideFlags: 0
@@ -3495,6 +3497,8 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  cutsceneId: C1_ReachedMapEnd
+  progressMilestoneId: reached_map_end
 --- !u!82 &314433727
 AudioSource:
   m_ObjectHideFlags: 0
@@ -4844,6 +4848,8 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  cutsceneId: C1_AfterPretest
+  progressMilestoneId: after_pretest
 --- !u!1 &355362201
 GameObject:
   m_ObjectHideFlags: 0
@@ -6310,6 +6316,8 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  cutsceneId: C1_TowerDefense_Win
+  progressMilestoneId: tower_outcome
 --- !u!1 &444982869
 GameObject:
   m_ObjectHideFlags: 0
@@ -7308,6 +7316,20 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 1
         m_CallState: 2
+      - m_Target: {fileID: 491744387}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
+  cutsceneId: C1_Anyways
+  progressMilestoneId: pretest_outcome
 --- !u!1 &491744387
 GameObject:
   m_ObjectHideFlags: 0
@@ -7325,7 +7347,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &491744388
 Transform:
   m_ObjectHideFlags: 0
@@ -8037,6 +8059,8 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  cutsceneId: C1_AfterPosttest
+  progressMilestoneId: after_posttest
 --- !u!1001 &518412746
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -8052,6 +8076,10 @@ PrefabInstance:
     - target: {fileID: 3197194743130275168, guid: e46d53245bcc6e54ab6e3c7b9da8a580, type: 3}
       propertyPath: isPostTest
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3197194743130275168, guid: e46d53245bcc6e54ab6e3c7b9da8a580, type: 3}
+      propertyPath: encounterId
+      value: C1_RE_03
       objectReference: {fileID: 0}
     - target: {fileID: 3197194743130275168, guid: e46d53245bcc6e54ab6e3c7b9da8a580, type: 3}
       propertyPath: QAs.Array.size
@@ -10859,6 +10887,10 @@ PrefabInstance:
     - target: {fileID: 3197194743130275168, guid: e46d53245bcc6e54ab6e3c7b9da8a580, type: 3}
       propertyPath: isPostTest
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3197194743130275168, guid: e46d53245bcc6e54ab6e3c7b9da8a580, type: 3}
+      propertyPath: encounterId
+      value: C1_RE_02
       objectReference: {fileID: 0}
     - target: {fileID: 3197194743130275168, guid: e46d53245bcc6e54ab6e3c7b9da8a580, type: 3}
       propertyPath: QAs.Array.size
@@ -13945,6 +13977,8 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  cutsceneId: C1_Posttest_Good
+  progressMilestoneId: posttest_outcome
 --- !u!1 &1113576402
 GameObject:
   m_ObjectHideFlags: 0
@@ -14292,6 +14326,8 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  cutsceneId: C1_Pretest_Good
+  progressMilestoneId: pretest_outcome
 --- !u!1 &1116733237
 GameObject:
   m_ObjectHideFlags: 0
@@ -14449,6 +14485,8 @@ MonoBehaviour:
   onCutsceneFinished:
     m_PersistentCalls:
       m_Calls: []
+  cutsceneId: C1_TowerDefense_Fail
+  progressMilestoneId: tower_outcome
 --- !u!4 &1129614362
 Transform:
   m_ObjectHideFlags: 0
@@ -16236,6 +16274,8 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  cutsceneId: C1_Pretest_Bad
+  progressMilestoneId: pretest_outcome
 --- !u!1 &1359420949
 GameObject:
   m_ObjectHideFlags: 0
@@ -17340,6 +17380,8 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  cutsceneId: C1_Posttest_Bad
+  progressMilestoneId: posttest_outcome
 --- !u!1001 &1471557544
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -20080,6 +20122,8 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  cutsceneId: C1_Intro
+  progressMilestoneId: intro
 --- !u!4 &1684355493
 Transform:
   m_ObjectHideFlags: 0
@@ -20754,6 +20798,10 @@ PrefabInstance:
     - target: {fileID: 3197194743130275168, guid: e46d53245bcc6e54ab6e3c7b9da8a580, type: 3}
       propertyPath: isPostTest
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3197194743130275168, guid: e46d53245bcc6e54ab6e3c7b9da8a580, type: 3}
+      propertyPath: encounterId
+      value: C1_Posttest
       objectReference: {fileID: 0}
     - target: {fileID: 3197194743130275168, guid: e46d53245bcc6e54ab6e3c7b9da8a580, type: 3}
       propertyPath: QAs.Array.size
@@ -22203,6 +22251,10 @@ PrefabInstance:
     - target: {fileID: 3197194743130275168, guid: e46d53245bcc6e54ab6e3c7b9da8a580, type: 3}
       propertyPath: isPostTest
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3197194743130275168, guid: e46d53245bcc6e54ab6e3c7b9da8a580, type: 3}
+      propertyPath: encounterId
+      value: C1_RE_01
       objectReference: {fileID: 0}
     - target: {fileID: 3197194743130275168, guid: e46d53245bcc6e54ab6e3c7b9da8a580, type: 3}
       propertyPath: QAs.Array.size
@@ -24539,6 +24591,10 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3197194743130275168, guid: e46d53245bcc6e54ab6e3c7b9da8a580, type: 3}
+      propertyPath: encounterId
+      value: C1_Pretest
+      objectReference: {fileID: 0}
+    - target: {fileID: 3197194743130275168, guid: e46d53245bcc6e54ab6e3c7b9da8a580, type: 3}
       propertyPath: QAs.Array.size
       value: 0
       objectReference: {fileID: 0}
@@ -26427,8 +26483,8 @@ SceneRoots:
   - {fileID: 1861380386}
   - {fileID: 1976493623}
   - {fileID: 909187618}
-  - {fileID: 1732067501}
   - {fileID: 2049008333}
+  - {fileID: 1732067501}
   - {fileID: 1870706851}
   - {fileID: 813565233}
   - {fileID: 518412746}

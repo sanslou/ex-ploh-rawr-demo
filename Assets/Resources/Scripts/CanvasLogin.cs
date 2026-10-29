@@ -114,34 +114,64 @@ public class CanvasLogin : MonoBehaviour
             }
             else
             {
-                string state = www.downloadHandler.text;
-                Debug.Log(state);
+            string state = www.downloadHandler.text.Trim();
+            if (state.Contains("<") ||
+                state.Contains("Warning:") ||
+                state.Contains("Fatal error:"))
+            {
+                textWrong.text = "The login server returned an error.";
+                textWrong.gameObject.SetActive(true);
+
+                Debug.LogError(
+                    "Login response contains server errors. Account data was not saved."
+                );
+
+                yield break;
+            }
                 if (state != "FAIL")
                 {
                     //Debug.Log("Login Success");
 
-                    if (PlayerPrefs.GetInt("isAccountSaved") != 1) // not saved; aka first time logging in or log-out at some point
-                    {
-                        string[] fields = state.Split('|');
-                        Debug.Log(fields.Length);
-                        string getID, getPwd, getPN;
-                        getID = fields[0];
-                        getPwd = fields[1];
-                        getPN = fields[2];
-                        
-
-                        PlayerPrefs.SetString("AccountID", getID);
-                        PlayerPrefs.SetString("AccountPwd", getPwd);
-                        PlayerPrefs.SetString("PlayerName", getPN);
-
-                        
-                        PlayerPrefs.SetInt("isAccountSaved", 1);
-                        PlayerPrefs.Save();
-                    }
                     
-                    btnLogin.gameObject.SetActive(false);
-                    textWrong.gameObject.SetActive(false);
-                    SceneManager.LoadScene("MainMenu");
+                string[] fields = state.Trim().Split('|');
+
+                if (fields.Length != 8 ||
+                    string.IsNullOrWhiteSpace(fields[0]) ||
+                    fields[0].Contains("<"))
+                {
+                    textWrong.text = "Invalid login response from server.";
+                    textWrong.gameObject.SetActive(true);
+                    yield break;
+                }
+
+                DBC.IS_GUEST_MODE = false;
+
+                PlayerPrefs.SetString("AccountID", fields[0].Trim());
+                PlayerPrefs.SetString("AccountPwd", fields[1]);
+                PlayerPrefs.SetString("AccountFN", fields[2]);
+                PlayerPrefs.SetString("AccountMN", fields[3]);
+                PlayerPrefs.SetString("AccountLN", fields[4]);
+                PlayerPrefs.SetString("AccountSec", fields[5]);
+                PlayerPrefs.SetString("PlayerName", fields[6]);
+                PlayerPrefs.SetString("PlayerGender", fields[7].Trim());
+
+                PlayerPrefs.SetInt("isAccountSaved", 1);
+                PlayerPrefs.Save();
+
+                Debug.Log("Login account details refreshed.");
+                
+                    
+                btnLogin.gameObject.SetActive(false);
+                textWrong.gameObject.SetActive(false);
+
+                Debug.Log(
+                "Before MainMenu: AccountID = " +
+                PlayerPrefs.GetString("AccountID", "MISSING") +
+                " | PlayerGender = " +
+                PlayerPrefs.GetString("PlayerGender", "MISSING")
+                );
+
+                SceneManager.LoadScene("MainMenu");
                 }
                 else {
                     Debug.Log("Login FAILED");
