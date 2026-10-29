@@ -1072,6 +1072,8 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
   cutsceneId: C2_Encounter_Podium
+  progressMilestoneId: encounter_podium
+  progressionChapter: 2
 --- !u!1 &28423501
 GameObject:
   m_ObjectHideFlags: 0
@@ -3624,6 +3626,8 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
   cutsceneId: C2_Encounter_Tools
+  progressMilestoneId: encounter_tools
+  progressionChapter: 2
 --- !u!4 &290193798 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3925934479963633849, guid: d09b75314c4902a4ba60b4900106840e, type: 3}
@@ -5395,6 +5399,8 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
   cutsceneId: C2_Pretest_Bad
+  progressMilestoneId: pretest_outcome
+  progressionChapter: 2
 --- !u!1 &422190115
 GameObject:
   m_ObjectHideFlags: 0
@@ -5534,6 +5540,8 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
   cutsceneId: C2_Encounter_Crown
+  progressMilestoneId: encounter_crown
+  progressionChapter: 2
 --- !u!4 &422190117
 Transform:
   m_ObjectHideFlags: 0
@@ -5658,6 +5666,10 @@ PrefabInstance:
     - target: {fileID: 3197194743130275168, guid: e46d53245bcc6e54ab6e3c7b9da8a580, type: 3}
       propertyPath: quizType
       value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3197194743130275168, guid: e46d53245bcc6e54ab6e3c7b9da8a580, type: 3}
+      propertyPath: encounterId
+      value: C2_RE_Tools
       objectReference: {fileID: 0}
     - target: {fileID: 3197194743130275168, guid: e46d53245bcc6e54ab6e3c7b9da8a580, type: 3}
       propertyPath: QAs.Array.size
@@ -7753,6 +7765,10 @@ PrefabInstance:
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 3197194743130275168, guid: e46d53245bcc6e54ab6e3c7b9da8a580, type: 3}
+      propertyPath: encounterId
+      value: C2_RE_Crown
+      objectReference: {fileID: 0}
+    - target: {fileID: 3197194743130275168, guid: e46d53245bcc6e54ab6e3c7b9da8a580, type: 3}
       propertyPath: QAs.Array.size
       value: 0
       objectReference: {fileID: 0}
@@ -8966,6 +8982,8 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
   cutsceneId: C2_Pretest_Good
+  progressMilestoneId: pretest_outcome
+  progressionChapter: 2
 --- !u!1 &658616982
 GameObject:
   m_ObjectHideFlags: 0
@@ -9461,6 +9479,10 @@ PrefabInstance:
     - target: {fileID: 3197194743130275168, guid: e46d53245bcc6e54ab6e3c7b9da8a580, type: 3}
       propertyPath: isPostTest
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3197194743130275168, guid: e46d53245bcc6e54ab6e3c7b9da8a580, type: 3}
+      propertyPath: encounterId
+      value: C2_Pretest
       objectReference: {fileID: 0}
     - target: {fileID: 3197194743130275168, guid: e46d53245bcc6e54ab6e3c7b9da8a580, type: 3}
       propertyPath: QAs.Array.size
@@ -11258,6 +11280,8 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
   cutsceneId: C2_AllEncounters_Finished
+  progressMilestoneId: all_encounters_finished
+  progressionChapter: 2
 --- !u!82 &836932385
 AudioSource:
   m_ObjectHideFlags: 0
@@ -13010,6 +13034,8 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
   cutsceneId: C2_AfterPretest
+  progressMilestoneId: after_pretest
+  progressionChapter: 2
 --- !u!1 &893451667
 GameObject:
   m_ObjectHideFlags: 0
@@ -13967,6 +13993,10 @@ PrefabInstance:
     - target: {fileID: 3197194743130275168, guid: e46d53245bcc6e54ab6e3c7b9da8a580, type: 3}
       propertyPath: quizType
       value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3197194743130275168, guid: e46d53245bcc6e54ab6e3c7b9da8a580, type: 3}
+      propertyPath: encounterId
+      value: C2_RE_Podium
       objectReference: {fileID: 0}
     - target: {fileID: 3197194743130275168, guid: e46d53245bcc6e54ab6e3c7b9da8a580, type: 3}
       propertyPath: QAs.Array.size
@@ -15579,6 +15609,10 @@ PrefabInstance:
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 3197194743130275168, guid: e46d53245bcc6e54ab6e3c7b9da8a580, type: 3}
+      propertyPath: encounterId
+      value: C2_RE_PotsVases
+      objectReference: {fileID: 0}
+    - target: {fileID: 3197194743130275168, guid: e46d53245bcc6e54ab6e3c7b9da8a580, type: 3}
       propertyPath: QAs.Array.size
       value: 0
       objectReference: {fileID: 0}
@@ -16980,6 +17014,8 @@ MonoBehaviour:
           m_BoolArgument: 1
         m_CallState: 2
   cutsceneId: 
+  progressMilestoneId: 
+  progressionChapter: 2
 --- !u!82 &1255496785
 AudioSource:
   m_ObjectHideFlags: 0
@@ -18806,6 +18842,8 @@ MonoBehaviour:
           m_BoolArgument: 1
         m_CallState: 2
   cutsceneId: C2_AllEncounters_Notification
+  progressMilestoneId: all_encounters_notification
+  progressionChapter: 2
 --- !u!1 &1457379687
 GameObject:
   m_ObjectHideFlags: 0
@@ -20087,6 +20125,10 @@ PrefabInstance:
     - target: {fileID: 3197194743130275168, guid: e46d53245bcc6e54ab6e3c7b9da8a580, type: 3}
       propertyPath: isPostTest
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3197194743130275168, guid: e46d53245bcc6e54ab6e3c7b9da8a580, type: 3}
+      propertyPath: encounterId
+      value: C2_Posttest
       objectReference: {fileID: 0}
     - target: {fileID: 3197194743130275168, guid: e46d53245bcc6e54ab6e3c7b9da8a580, type: 3}
       propertyPath: QAs.Array.size
@@ -21877,6 +21919,8 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
   cutsceneId: C2_Minigame_Win
+  progressMilestoneId: minigame_win
+  progressionChapter: 2
 --- !u!82 &1692584761
 AudioSource:
   m_ObjectHideFlags: 0
@@ -22593,6 +22637,8 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
   cutsceneId: C2_Encounter_PotsVases
+  progressMilestoneId: encounter_pots_vases
+  progressionChapter: 2
 --- !u!1 &1756128530
 GameObject:
   m_ObjectHideFlags: 0
@@ -23988,6 +24034,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   cutsceneId: 
+  progressMilestoneId: 
+  progressionChapter: 2
 --- !u!82 &1916404507
 AudioSource:
   m_ObjectHideFlags: 0
@@ -27052,6 +27100,8 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
   cutsceneId: C2_Intro
+  progressMilestoneId: intro
+  progressionChapter: 2
 --- !u!4 &2131056539
 Transform:
   m_ObjectHideFlags: 0

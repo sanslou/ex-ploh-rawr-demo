@@ -104,8 +104,7 @@ public class Cutscene : MonoBehaviour
     [Header("Cutscene Completion")]
     [SerializeField] private string cutsceneId;
     [SerializeField] private string progressMilestoneId;
-    [SerializeField, Range(1, 2)]
-    private int progressionChapter = 1;
+    [SerializeField, Range(1, 2)] private int progressionChapter = 1;
 
     private string progressionProfile;
 
@@ -533,6 +532,8 @@ public class Cutscene : MonoBehaviour
         }
 
     }
+
+
 
     public void HidePlayerUI()
     {

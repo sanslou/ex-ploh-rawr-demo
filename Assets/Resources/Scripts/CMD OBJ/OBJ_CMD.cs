@@ -683,21 +683,43 @@ public class OBJ_CMD : NPC
 
         // TODO: Adjust future difficulties of minigames according to scores
     }
-    
-    public void HideCloseButton() // Only exists here to be called by the cutscene.
+
+    public void HideCloseButton()
     {
         GameObject readyPage = GameObject.Find("Terminal Ready");
 
         if (readyPage == null)
+        {
+            Debug.LogWarning("Terminal Ready was not found.", this);
             return;
+        }
 
-        Transform closeButton = readyPage.transform.Find("Button Close");
+        Transform closeTransform =
+            readyPage.transform.Find("Button Close");
 
-        if (closeButton != null)
-        closeButton.GetComponentInParent<Button>().interactable = false;
-        closeButton.GetComponentInParent<Image>().enabled = false;
-        closeButton.GetChild(0).GetComponent<TextMeshProUGUI>().enabled = false;
+        if (closeTransform == null)
+        {
+            Debug.LogWarning(
+                "Button Close was not found inside Terminal Ready.",
+                this
+            );
+            return;
+        }
 
+        Button button = closeTransform.GetComponent<Button>();
+
+        if (button != null)
+        {
+            button.interactable = false;
+        }
+
+        Graphic[] graphics =
+            closeTransform.GetComponentsInChildren<Graphic>(true);
+
+        foreach (Graphic graphic in graphics)
+        {
+            graphic.enabled = false;
+        }
     }
 
     public void ShowCloseButton()

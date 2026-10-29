@@ -16,14 +16,54 @@ public static class ChapterProgression
         "after_posttest"
     };
 
-    private static string GetKey(string profile, string milestoneId)
+    private static readonly string[] chapter2Milestones =
     {
-        return "EXplorer_Chapter1Progress_" +
+        "intro",
+        "pretest_outcome",
+        "after_pretest",
+        "encounter_pots_vases",
+        "encounter_podium",
+        "encounter_crown",
+        "encounter_tools",
+        "all_encounters_notification",
+        "all_encounters_finished",
+        "minigame_win"
+    };
+
+    private static string[] GetMilestones(int chapter)
+    {
+        if (chapter == 1)
+        {
+            return chapter1Milestones;
+        }
+
+        if (chapter == 2)
+        {
+            return chapter2Milestones;
+        }
+
+        return null;
+    }
+
+    private static string GetKey(
+        string profile,
+        int chapter,
+        string milestoneId)
+    {
+        return "EXplorer_Chapter" + chapter + "Progress_" +
             Uri.EscapeDataString(profile) + "_" +
             milestoneId;
     }
 
     public static void Complete(string profile, string milestoneId)
+    {
+        Complete(profile, 1, milestoneId);
+    }
+
+    public static void Complete(
+        string profile,
+        int chapter,
+        string milestoneId)
     {
         if (string.IsNullOrWhiteSpace(profile) ||
             string.IsNullOrWhiteSpace(milestoneId))
@@ -31,15 +71,20 @@ public static class ChapterProgression
             return;
         }
 
-        if (Array.IndexOf(chapter1Milestones, milestoneId) < 0)
+        milestoneId = milestoneId.Trim();
+        string[] milestones = GetMilestones(chapter);
+
+        if (milestones == null ||
+            Array.IndexOf(milestones, milestoneId) < 0)
         {
             Debug.LogWarning(
-                "Unknown Chapter 1 milestone: " + milestoneId
+                "Unknown Chapter " + chapter +
+                " milestone: " + milestoneId
             );
             return;
         }
 
-        string key = GetKey(profile, milestoneId);
+        string key = GetKey(profile, chapter, milestoneId);
 
         if (PlayerPrefs.GetInt(key, 0) == 1)
         {
@@ -50,40 +95,72 @@ public static class ChapterProgression
         PlayerPrefs.Save();
 
         Debug.Log(
-            "Chapter 1 progression: " +
-            GetPercentage(profile).ToString("0.00") + "%"
+            "Chapter " + chapter + " progression: " +
+            GetPercentage(profile, chapter).ToString("0.00") + "%"
         );
     }
 
-    public static void DebugMilestones(string profile)
-    {
-        foreach (string milestone in chapter1Milestones)
-        {
-            bool completed =
-                PlayerPrefs.GetInt(GetKey(profile, milestone), 0) == 1;
-
-            if (completed)
-            {
-                Debug.Log("COMPLETE: " + milestone);
-            }
-            else
-            {
-                Debug.LogWarning("MISSING: " + milestone);
-            }
-        }
-    }
     public static float GetPercentage(string profile)
     {
+        return GetPercentage(profile, 1);
+    }
+
+    public static float GetPercentage(string profile, int chapter)
+    {
+        string[] milestones = GetMilestones(chapter);
+
+        if (milestones == null ||
+            string.IsNullOrWhiteSpace(profile))
+        {
+            return 0f;
+        }
+
         int completed = 0;
 
-        foreach (string milestone in chapter1Milestones)
+        foreach (string milestone in milestones)
         {
-            if (PlayerPrefs.GetInt(GetKey(profile, milestone), 0) == 1)
+            if (PlayerPrefs.GetInt(
+                GetKey(profile, chapter, milestone), 0) == 1)
             {
                 completed++;
             }
         }
 
-        return completed * 100f / chapter1Milestones.Length;
+        return completed * 100f / milestones.Length;
+    }
+
+    public static void DebugMilestones(string profile)
+    {
+        DebugMilestones(profile, 1);
+    }
+
+    public static void DebugMilestones(string profile, int chapter)
+    {
+        string[] milestones = GetMilestones(chapter);
+
+        if (milestones == null ||
+            string.IsNullOrWhiteSpace(profile))
+        {
+            return;
+        }
+
+        foreach (string milestone in milestones)
+        {
+            bool completed = PlayerPrefs.GetInt(
+                GetKey(profile, chapter, milestone), 0) == 1;
+
+            if (completed)
+            {
+                Debug.Log(
+                    "Chapter " + chapter + " COMPLETE: " + milestone
+                );
+            }
+            else
+            {
+                Debug.LogWarning(
+                    "Chapter " + chapter + " MISSING: " + milestone
+                );
+            }
+        }
     }
 }
