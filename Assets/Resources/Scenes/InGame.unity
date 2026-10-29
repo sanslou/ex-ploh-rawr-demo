@@ -7329,7 +7329,7 @@ MonoBehaviour:
           m_BoolArgument: 1
         m_CallState: 2
   cutsceneId: C1_Anyways
-  progressMilestoneId: pretest_outcome
+  progressMilestoneId: anyways
 --- !u!1 &491744387
 GameObject:
   m_ObjectHideFlags: 0

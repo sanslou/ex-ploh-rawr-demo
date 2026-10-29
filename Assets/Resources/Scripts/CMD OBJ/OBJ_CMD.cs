@@ -59,6 +59,13 @@ public class OBJ_CMD : NPC
         public string quiz_type;
     }
 
+    [System.Serializable]
+    private class AssessmentHistory
+    {
+        public List<RandomEncounterScoreRecord> attempts =
+            new List<RandomEncounterScoreRecord>();
+    }
+
     private RandomEncounterScoreRecord currentEncounterRecord;
     private int completedQuestionCount;
 
@@ -207,7 +214,46 @@ public class OBJ_CMD : NPC
 );
 
         // Later: pass this record to the database submission system.
-        currentEncounterRecord = null;
+        //currentEncounterRecord = null;
+        if (SaveAssessmentLocally(currentEncounterRecord))
+        {
+            currentEncounterRecord = null;
+        }
+        else
+        {
+            Debug.LogWarning(
+                "Assessment was not saved. Record remains in memory for now.",
+                this
+            );
+        }
+    }
+
+    [ContextMenu("Debug Saved Assessment History")]
+    private void DebugSavedAssessmentHistory()
+    {
+        string studentId =
+            PlayerPrefs.GetString("AccountID", "").Trim();
+
+        if (DBC.IS_GUEST_MODE || string.IsNullOrEmpty(studentId))
+        {
+            Debug.LogWarning("Log in as a student first.");
+            return;
+        }
+
+        string key = "EXplorer_AssessmentHistory_v1_" +
+            System.Uri.EscapeDataString(studentId);
+
+        if (!PlayerPrefs.HasKey(key))
+        {
+            Debug.Log("No assessment history saved for this student.");
+            return;
+        }
+
+        Debug.Log(
+            "SAVED ASSESSMENT HISTORY:\n" +
+            PlayerPrefs.GetString(key),
+            this
+        );
     }
     private string GetHighScoreKey()
     {
@@ -1077,7 +1123,82 @@ public class OBJ_CMD : NPC
 
         return consoles;
     }
-   
+    //save assessment attempts locally
+    private bool SaveAssessmentLocally(
+    RandomEncounterScoreRecord record)
+    {
+        if (record == null ||
+            string.IsNullOrWhiteSpace(record.student_id))
+        {
+            return false;
+        }
+
+        string key = "EXplorer_AssessmentHistory_v1_" +
+            System.Uri.EscapeDataString(record.student_id);
+
+        AssessmentHistory history;
+
+        try
+        {
+            if (PlayerPrefs.HasKey(key))
+            {
+                history = JsonUtility.FromJson<AssessmentHistory>(
+                    PlayerPrefs.GetString(key)
+                );
+
+                if (history == null || history.attempts == null)
+                {
+                    Debug.LogError(
+                        "Cannot read assessment history. Existing save preserved."
+                    );
+                    return false;
+                }
+            }
+            else
+            {
+                history = new AssessmentHistory();
+            }
+
+            foreach (RandomEncounterScoreRecord attempt in history.attempts)
+            {
+                if (attempt != null &&
+                    attempt.attempt_id == record.attempt_id)
+                {
+                    return true;
+                }
+            }
+
+            history.attempts.Add(record);
+
+            PlayerPrefs.SetString(
+                key,
+                JsonUtility.ToJson(history)
+            );
+
+            PlayerPrefs.Save();
+
+            Debug.Log(
+                "Assessment saved locally: " +
+                record.encounter_id + " | " +
+                record.correct_answers + "/" +
+                record.total_questions + " | " +
+                "Saved attempts: " + history.attempts.Count,
+                this
+            );
+
+            return true;
+        }
+        catch (System.Exception error)
+        {
+            Debug.LogError(
+                "Could not save assessment history: " + error.Message,
+                this
+            );
+
+            return false;
+        }
+    }
+
     //PHP AND DATABASE FETCHING STUFF FOR DISTRIBUTING RANDOM ENCOUNTERS
     public QuizType ConfiguredQuizType
     {
