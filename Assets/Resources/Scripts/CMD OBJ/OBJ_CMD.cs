@@ -43,6 +43,7 @@ public class OBJ_CMD : NPC
     [Header("Check this if console is post-test or pre-test")]
     [SerializeField] private UnityEvent onQuizFinished;
 
+
     public static bool IsQuizOngoing { get; private set; }
 
     [SerializeReference]
@@ -66,6 +67,11 @@ public class OBJ_CMD : NPC
    TaskCompletionSource<bool> quizRespond = new TaskCompletionSource<bool>();
 
     public async override void Interact() {
+        if (!QuestionsReady)
+        {
+            Debug.LogWarning("Questions are still loading.");
+            return;
+        }
         IsQuizOngoing = true;
         if (quizType == QuizType.PreTest ||
             quizType == QuizType.PostTest)
@@ -160,6 +166,12 @@ public class OBJ_CMD : NPC
     public void StartAssessment()
     {
         Debug.Log("Starting assessment: " + gameObject.name);
+
+        if (!QuestionsReady)
+        {
+            Debug.LogWarning("Assessment questions are still loading.");
+            return;
+        }
 
         if (quizType != QuizType.PreTest &&
             quizType != QuizType.PostTest)
@@ -961,5 +973,12 @@ public class OBJ_CMD : NPC
 
         return consoles;
     }
+   
+    //PHP AND DATABASE FETCHING STUFF FOR DISTRIBUTING RANDOM ENCOUNTERS
+    public QuizType ConfiguredQuizType
+    {
+        get { return quizType; }
+    }
 
+    public bool QuestionsReady { get; set; } = true;
 }

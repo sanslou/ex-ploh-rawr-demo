@@ -5657,7 +5657,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3197194743130275168, guid: e46d53245bcc6e54ab6e3c7b9da8a580, type: 3}
       propertyPath: QAs.Array.size
-      value: 5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3197194743130275168, guid: e46d53245bcc6e54ab6e3c7b9da8a580, type: 3}
       propertyPath: showCloseButton
@@ -7750,7 +7750,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3197194743130275168, guid: e46d53245bcc6e54ab6e3c7b9da8a580, type: 3}
       propertyPath: QAs.Array.size
-      value: 5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3197194743130275168, guid: e46d53245bcc6e54ab6e3c7b9da8a580, type: 3}
       propertyPath: showCloseButton
@@ -13963,7 +13963,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3197194743130275168, guid: e46d53245bcc6e54ab6e3c7b9da8a580, type: 3}
       propertyPath: QAs.Array.size
-      value: 5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3197194743130275168, guid: e46d53245bcc6e54ab6e3c7b9da8a580, type: 3}
       propertyPath: showCloseButton
@@ -15573,7 +15573,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3197194743130275168, guid: e46d53245bcc6e54ab6e3c7b9da8a580, type: 3}
       propertyPath: QAs.Array.size
-      value: 5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3197194743130275168, guid: e46d53245bcc6e54ab6e3c7b9da8a580, type: 3}
       propertyPath: showCloseButton
@@ -19831,6 +19831,61 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1532604825}
   m_CullTransparentMesh: 1
+--- !u!1 &1569312807
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1569312809}
+  - component: {fileID: 1569312808}
+  m_Layer: 0
+  m_Name: EncounterQuestionLoader
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1569312808
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1569312807}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c20bb6594570b9c488f7a45dc35eb1a2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EncounterQuestionLoader
+  endpointUrl: http://localhost/explorer/get_encounter_questions.php
+  firstQuestionId: 21
+  lastQuestionId: 40
+  targetConsoles:
+  - {fileID: 1130245399}
+  - {fileID: 1003073319}
+  - {fileID: 627387246}
+  - {fileID: 438765986}
+  onQuestionsLoaded:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!4 &1569312809
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1569312807}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 476.3422, y: 347.08008, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &1588460386 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3925934479963633849, guid: d09b75314c4902a4ba60b4900106840e, type: 3}
@@ -27257,6 +27312,7 @@ SceneRoots:
   - {fileID: 1280593354}
   - {fileID: 5334898264170294779}
   - {fileID: 689428570}
+  - {fileID: 1569312809}
   - {fileID: 1130245398}
   - {fileID: 1003073318}
   - {fileID: 627387245}
