@@ -30,6 +30,21 @@ public class OBJ_CMD : NPC
     [SerializeField] private bool showCloseButton = true;
     [Header("Universal Quiz Configuration")]
     [SerializeField] private QuizType quizType = QuizType.Regular;
+    public bool IsFlashcardRandomEncounter
+    {
+        get
+        {
+            return quizType == QuizType.RandomEncounter;
+        }
+    }
+
+    public bool FlashcardQuestionsReady
+    {
+        get
+        {
+            return QuestionsReady;
+        }
+    }
 
     [Header("Flashcards")]
     [Min(1)] public int flashcardChapter = 1; // Flashcards automatically gather every OBJ_CMD GameObject's inspector elements for the entire scene. 

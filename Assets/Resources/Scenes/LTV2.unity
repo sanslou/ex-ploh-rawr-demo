@@ -17664,30 +17664,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: FlashcardsCanvas
       objectReference: {fileID: 0}
-    - target: {fileID: 4415697515359819877, guid: 193e6a74cc1da6943a45b42008cd45ca, type: 3}
-      propertyPath: cards.Array.size
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4415697515359819877, guid: 193e6a74cc1da6943a45b42008cd45ca, type: 3}
-      propertyPath: cards.Array.data[2].term
-      value: int
-      objectReference: {fileID: 0}
-    - target: {fileID: 4415697515359819877, guid: 193e6a74cc1da6943a45b42008cd45ca, type: 3}
-      propertyPath: cards.Array.data[2].collected
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4415697515359819877, guid: 193e6a74cc1da6943a45b42008cd45ca, type: 3}
-      propertyPath: cards.Array.data[2].definition
-      value: Which Java primitive type stores a 32-bit signed integer?
-      objectReference: {fileID: 0}
-    - target: {fileID: 7385775287595558776, guid: 193e6a74cc1da6943a45b42008cd45ca, type: 3}
-      propertyPath: m_Color.a
-      value: 0.78039217
-      objectReference: {fileID: 0}
-    - target: {fileID: 7647986755912213717, guid: 193e6a74cc1da6943a45b42008cd45ca, type: 3}
-      propertyPath: m_Enabled
-      value: 0
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

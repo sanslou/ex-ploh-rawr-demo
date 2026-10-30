@@ -19,6 +19,37 @@ public class ExplorerFlashcardPanel : MonoBehaviour
     public Text chapterLabel, categoryLabel, sideLabel, cardText, counter;
     public Text collectedLabel, generalLabel;
     public Button previous, next, flip, shuffle;
+    [Tooltip("Optional: visible only in Collected. Leave its Inspector OnClick empty.")]
+    public Button checkButton;
+    private bool wasCanvasVisible;
+
+    private void Awake()
+    {
+        if (checkButton != null) checkButton.onClick.AddListener(RemoveCurrentCollected);
+    }
+
+    private void OnDestroy()
+    {
+        if (checkButton != null) checkButton.onClick.RemoveListener(RemoveCurrentCollected);
+    }
+
+    private void Update()
+    {
+        bool isVisible = panelCanvas != null && panelCanvas.isActiveAndEnabled;
+        if (isVisible && !wasCanvasVisible) Refresh();
+        wasCanvasVisible = isVisible;
+    }
+
+    public void RemoveCurrentCollected()
+    {
+        if (!collectedOnly || visible.Count == 0) return;
+        int previousIndex = index;
+        Card card = visible[index];
+        ExplorerFlashcardStore.RemoveCollectedCard(card.chapter, card.term, card.definition);
+        Refresh();
+        index = Mathf.Clamp(previousIndex, 0, Mathf.Max(0, visible.Count - 1));
+        Draw();
+    }
     private readonly List<Card> visible = new List<Card>();
     private int chapter = 1, index;
     private bool collectedOnly = true, showingTerm;
@@ -46,13 +77,20 @@ public class ExplorerFlashcardPanel : MonoBehaviour
         // Saved data replaces the old Inspector demo entries at runtime.
         ExplorerFlashcardStore.RegisterLoadedQuizzes();
         cards = ExplorerFlashcardStore.GetCards();
-        visible.Clear(); int collectedCount = 0, generalCount = 0;
+        List<Card> generalCards = ExplorerFlashcardStore.GetGeneralCards();
+        visible.Clear();
+        int collectedCount = 0, generalCount = 0;
         foreach (Card card in cards)
+        {
+            if (card == null || card.chapter != chapter || !card.collected) continue;
+            collectedCount++;
+            if (collectedOnly) visible.Add(card);
+        }
+        foreach (Card card in generalCards)
         {
             if (card == null || card.chapter != chapter) continue;
             generalCount++;
-            if (card.collected) collectedCount++;
-            if (!collectedOnly || card.collected) visible.Add(card);
+            if (!collectedOnly) visible.Add(card);
         }
         chapterLabel.text = "CHAPTER " + chapter;
         collectedLabel.text = "Collected Flashcards (" + collectedCount + ")";
@@ -64,6 +102,11 @@ public class ExplorerFlashcardPanel : MonoBehaviour
     private void Draw()
     {
         bool hasCards = visible.Count > 0;
+        if (checkButton != null)
+        {
+            checkButton.gameObject.SetActive(collectedOnly);
+            checkButton.interactable = collectedOnly && hasCards;
+        }
         previous.interactable = visible.Count > 1; next.interactable = visible.Count > 1;
         flip.interactable = hasCards; shuffle.interactable = visible.Count > 1;
         if (!hasCards)

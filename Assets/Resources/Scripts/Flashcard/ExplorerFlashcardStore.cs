@@ -25,6 +25,9 @@ public static class ExplorerFlashcardStore
         public List<ExplorerFlashcardPanel.Card> cards =
             new List<ExplorerFlashcardPanel.Card>();
 
+        public List<ExplorerFlashcardPanel.Card> generalCards =
+            new List<ExplorerFlashcardPanel.Card>();
+
         public List<FailureRecord> failures =
             new List<FailureRecord>();
     }
@@ -75,6 +78,11 @@ public static class ExplorerFlashcardStore
                 {
                     data.cards =
                         new List<ExplorerFlashcardPanel.Card>();
+                }
+
+                if (data.generalCards == null)
+                {
+                    data.generalCards = new List<ExplorerFlashcardPanel.Card>();
                 }
 
                 if (data.failures == null)
@@ -199,68 +207,97 @@ public static class ExplorerFlashcardStore
         return true;
     }
 
+    // Rebuild each loaded chapter only after ALL its encounter consoles are ready.
+    // Other chapters retain their last successfully loaded General pool.
     public static void RegisterLoadedQuizzes()
     {
         Load();
-
-        bool changed = false;
-
-        OBJ_CMD[] quizzes =
-            UnityEngine.Object.FindObjectsByType<OBJ_CMD>(
-                FindObjectsInactive.Include,
-                FindObjectsSortMode.None
-            );
-
+        OBJ_CMD[] quizzes = UnityEngine.Object.FindObjectsByType<OBJ_CMD>(
+            FindObjectsInactive.Include, FindObjectsSortMode.None);
+        Dictionary<int, List<OBJ_CMD>> chapters = new Dictionary<int, List<OBJ_CMD>>();
         foreach (OBJ_CMD quiz in quizzes)
         {
-            if (quiz.QAs == null)
-            {
-                continue;
-            }
-
-            foreach (QA qa in quiz.QAs)
-            {
-                if (Add(
-                    Mathf.Max(1, quiz.flashcardChapter),
-                    qa,
-                    false))
-                {
-                    changed = true;
-                }
-            }
-        }
-
-        if (changed)
-        {
-            Save();
-        }
-    }
-
-    public static void RegisterQuestions(
-        int chapter,
-        IEnumerable<QA> questions)
-    {
-        Load();
-
-        if (questions == null)
-        {
-            return;
+            if (!quiz.IsFlashcardRandomEncounter) continue;
+            int chapter = Mathf.Max(1, quiz.flashcardChapter);
+            if (!chapters.ContainsKey(chapter))
+                chapters.Add(chapter, new List<OBJ_CMD>());
+            chapters[chapter].Add(quiz);
         }
 
         bool changed = false;
-
-        foreach (QA qa in questions)
+        foreach (var entry in chapters)
         {
-            if (Add(Mathf.Max(1, chapter), qa, false))
+            bool ready = true;
+            List<ExplorerFlashcardPanel.Card> fresh =
+                new List<ExplorerFlashcardPanel.Card>();
+            foreach (OBJ_CMD quiz in entry.Value)
             {
+                if (!quiz.FlashcardQuestionsReady || quiz.QAs == null || quiz.QAs.Count == 0)
+                {
+                    ready = false;
+                    break;
+                }
+                foreach (QA qa in quiz.QAs)
+                {
+                    string term, definition;
+                    if (!TryGetFlashcardContent(qa, out term, out definition)) continue;
+                    if (fresh.Exists(c => c.term == term && c.definition == definition)) continue;
+                    fresh.Add(new ExplorerFlashcardPanel.Card
+                    {
+                        chapter = entry.Key,
+                        term = term,
+                        definition = definition
+                    });
+                }
+            }
+            // Empty/failed loads must not erase the last valid pool.
+            if (!ready || fresh.Count == 0) continue;
+            List<ExplorerFlashcardPanel.Card> old =
+                data.generalCards.FindAll(c => c != null && c.chapter == entry.Key);
+            bool same = old.Count == fresh.Count;
+            if (same)
+            {
+                foreach (var card in fresh)
+                    if (!old.Exists(c => c.term == card.term && c.definition == card.definition))
+                    { same = false; break; }
+            }
+            if (same) continue;
+            data.generalCards.RemoveAll(c => c == null || c.chapter == entry.Key);
+            data.generalCards.AddRange(fresh);
+            changed = true;
+        }
+        if (changed) Save();
+    }
+
+    // Existing OBJ_CMD calls remain valid. The source of General is the live
+    // encounter consoles, never an accumulating history of registered questions.
+    public static void RegisterQuestions(int chapter, IEnumerable<QA> questions)
+    {
+        RegisterLoadedQuizzes();
+    }
+
+    public static bool RemoveCollectedCard(int chapter, string term, string definition)
+    {
+        Load();
+        bool changed = false;
+        foreach (var card in data.cards)
+        {
+            if (card != null && card.chapter == chapter &&
+                card.term == term && card.definition == definition && card.collected)
+            {
+                card.collected = false;
                 changed = true;
             }
         }
+        // Assessment failure history is retained; review completion is separate.
+        if (changed) Save();
+        return changed;
+    }
 
-        if (changed)
-        {
-            Save();
-        }
+    public static List<ExplorerFlashcardPanel.Card> GetGeneralCards()
+    {
+        Load();
+        return new List<ExplorerFlashcardPanel.Card>(data.generalCards);
     }
 
     // Retained for compatibility with existing callers.
@@ -324,22 +361,9 @@ public static class ExplorerFlashcardStore
                 continue;
             }
 
-            // PreTest and encounters add cards for review.
-            // PostTest failures remain separate.
-            if (type == OBJ_CMD.QuizType.PreTest ||
-                type == OBJ_CMD.QuizType.RandomEncounter)
+            if (Add(chapter, qa, true))
             {
-                if (Add(chapter, qa, true))
-                {
-                    changed = true;
-                }
-            }
-            else
-            {
-                if (Add(chapter, qa, false))
-                {
-                    changed = true;
-                }
+                changed = true;
             }
 
             bool exists = false;
