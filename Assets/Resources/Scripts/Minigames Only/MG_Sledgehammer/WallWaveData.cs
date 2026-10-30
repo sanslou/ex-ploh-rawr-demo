@@ -12,6 +12,7 @@ public class WallWaveData : ScriptableObject
     [Header("Wall Answers")]
     public WallAnswerData[] answers;
 
+
     public bool HasValidAnswers()
     {
         if (answers == null || answers.Length == 0)

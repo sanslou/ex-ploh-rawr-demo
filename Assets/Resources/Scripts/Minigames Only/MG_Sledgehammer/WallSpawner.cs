@@ -2,10 +2,50 @@ using UnityEngine;
 using TMPro;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.Networking;
 
 public class WallSpawner : MonoBehaviour
 {
+
+    [System.Serializable]
+    private class DatabaseQuestion
+    {
+        public int id;
+        public string question;
+        public string[] choices;
+        public string answer;
+        public string waveName;
+        public int spawnsRequired;
+    }
+
+    [System.Serializable]
+    private class DatabaseResponse
+    {
+        public bool success;
+        public string message;
+        public DatabaseQuestion[] questions;
+    }
+
+    private readonly List<WallWaveData> runtimeWaves =
+        new List<WallWaveData>();
+
+    private string CleanDatabaseAnswer(string value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return "";
+        }
+
+        return System.Text.RegularExpressions.Regex.Replace(
+            value.Trim(),
+            @"\s+",
+            " "
+        );
+    }
     // REFERENCES
+    [Header("Result Recording")]
+    [SerializeField] private MinigameResultRecorder resultRecorder;
+
     [Header("Wall Prefab")]
     [SerializeField] private WallObstacle wallPrefab;
     [Header("Results Screen")]
@@ -82,49 +122,200 @@ public class WallSpawner : MonoBehaviour
 
 
 
-    private void Start()
+    private IEnumerator Start()
     {
-        // TODO: Measure wall spawner - FIN
-        // TODO: Divide walls after measurement - FINN
         score = 0;
         maxScore = 0;
+        isSpawning = false;
 
-        if (loadWavesFromResources)
+        string host = "localhost";
+
+        if (!string.IsNullOrWhiteSpace(DBC.IP_ADDRESS))
         {
-            waves = Resources.LoadAll<WallWaveData>("SledgehammerData");
-
-            Debug.Log(
-                "WallSpawner: Loaded " + waves.Length +
-                " WallWaveData assets from Resources/SledgehammerData."
-            );
+            host = DBC.IP_ADDRESS.Trim();
         }
+
+        string url =
+            "http://" + host +
+            "/Explorer/php%20stuffs/get_sledgehammer_questions.php" +
+            "?chapter=" + assessmentChapter;
+
+        using (UnityWebRequest request = UnityWebRequest.Get(url))
+        {
+            request.timeout = 20;
+
+            yield return request.SendWebRequest();
+
+            if (request.result != UnityWebRequest.Result.Success)
+            {
+                Debug.LogError(
+                    "Sledgehammer content download failed: " +
+                    request.error,
+                    this
+                );
+                yield break;
+            }
+
+            DatabaseResponse response = null;
+
+            try
+            {
+                response = JsonUtility.FromJson<DatabaseResponse>(
+                    request.downloadHandler.text
+                );
+            }
+            catch (System.Exception error)
+            {
+                Debug.LogError(
+                    "Sledgehammer: Invalid server response: " +
+                    error.Message,
+                    this
+                );
+            }
+
+            if (response == null ||
+                !response.success ||
+                response.questions == null ||
+                response.questions.Length == 0)
+            {
+                Debug.LogError(
+                    "Sledgehammer: No usable database questions received.",
+                    this
+                );
+                yield break;
+            }
+
+            foreach (DatabaseQuestion row in response.questions)
+            {
+                if (row == null ||
+                    row.spawnsRequired < 1 ||
+                    string.IsNullOrWhiteSpace(row.question) ||
+                    string.IsNullOrWhiteSpace(row.answer) ||
+                    row.choices == null ||
+                    row.choices.Length != 4
+                    )
+                {
+                    Debug.LogError(
+                        "Sledgehammer: Incomplete database question.",
+                        this
+                    );
+                    yield break;
+                }
+
+                string correctAnswer = CleanDatabaseAnswer(row.answer);
+
+                WallAnswerData[] answers = new WallAnswerData[4];
+                int correctCount = 0;
+
+                for (int i = 0; i < row.choices.Length; i++)
+                {
+                    string text = CleanDatabaseAnswer(row.choices[i]);
+
+                    if (string.IsNullOrWhiteSpace(text))
+                    {
+                        Debug.LogError(
+                            "Sledgehammer: Empty choice at question " + row.id,
+                            this
+                        );
+                        yield break;
+                    }
+
+                    bool isCorrect = string.Equals(
+                        text,
+                        correctAnswer,
+                        System.StringComparison.OrdinalIgnoreCase
+                    );
+
+                    if (isCorrect)
+                    {
+                        correctCount++;
+                    }
+
+                    answers[i] = new WallAnswerData
+                    {
+                        answerText = text,
+                        isCorrect = isCorrect
+                    };
+                }
+
+                if (correctCount != 1)
+                {
+                    Debug.LogError(
+                        "Sledgehammer: Question " + row.id +
+                        " must have exactly one choice matching Answer.",
+                        this
+                    );
+                    yield break;
+                }
+
+                WallWaveData wave =
+                    ScriptableObject.CreateInstance<WallWaveData>();
+
+                wave.name = "Database_Wall_" + row.id;
+                wave.waveName = row.waveName;
+
+                if (string.IsNullOrWhiteSpace(wave.waveName))
+                {
+                    wave.waveName = "Question " + row.id;
+                }
+
+                wave.question = row.question.Trim();
+                wave.spawnsRequired = row.spawnsRequired;
+                wave.answers = answers;
+
+                runtimeWaves.Add(wave);
+            }
+        }
+
+        waves = runtimeWaves.ToArray();
+
+        Debug.Log(
+            "Sledgehammer: Loaded " + waves.Length +
+            " database wave questions.",
+            this
+        );
 
         ApplyAdaptiveDifficulty();
 
         if (!ValidateSetup())
         {
             enabled = false;
-            return;
+            yield break;
         }
 
         totalWavesToPlay = Mathf.Max(1, numberOfWaves);
 
-        Debug.Log("Sledgehammer: Playing " + totalWavesToPlay + " waves.");
-
-        if (randomizeWaves) // randomize waves if the option is enabled
+        if (randomizeWaves)
         {
             ShuffleWaves();
         }
 
-        if (!LoadWave(0)) // load first wave, if it fails, disable the spawner
+        if (!LoadWave(0))
         {
             enabled = false;
-            return;
+            yield break;
         }
+
+        resultsScript = resultsScreen?.GetComponent<Results>();
 
         isSpawning = true;
         spawnTimer = 0f;
-        resultsScript = resultsScreen?.GetComponent<Results>();
+
+        Debug.Log(
+            "Sledgehammer: Playing " + totalWavesToPlay + " waves.",
+            this
+        );
+    }
+
+    private void OnDestroy()
+    {
+        foreach (WallWaveData wave in runtimeWaves)
+        {
+            if (wave != null)
+            {
+                Destroy(wave);
+            }
+        }
     }
 
     private WallWaveData CurrentWave
@@ -149,8 +340,8 @@ public class WallSpawner : MonoBehaviour
         {
             difficultyName = "Easy";
 
-            spawnInterval = 4f;
-            baseWallSpeed = 2.5f;
+            spawnInterval = 6f;
+            baseWallSpeed = 1.5f;
             wrongHitSpeedMultiplier = 1.10f;
             maximumSpeedMultiplier = 2f;
         }
@@ -158,7 +349,7 @@ public class WallSpawner : MonoBehaviour
         {
             difficultyName = "Normal";
 
-            spawnInterval = 3f; // 4
+            spawnInterval = 4f; // 4
             baseWallSpeed = 4f; //4
             wrongHitSpeedMultiplier = 1.15f;
             maximumSpeedMultiplier = 3f;
@@ -168,7 +359,7 @@ public class WallSpawner : MonoBehaviour
             difficultyName = "Hard";
 
             // Your tested Hard settings.
-            spawnInterval = 2.5f;
+            spawnInterval = 3f;
             baseWallSpeed = 6f;
             wrongHitSpeedMultiplier = 1.25f;
             maximumSpeedMultiplier = 4f;
@@ -509,7 +700,28 @@ public class WallSpawner : MonoBehaviour
             }
 
             Debug.Log("All walls cleared. Displaying results.");
-            
+
+            if (resultRecorder != null)
+            {
+                string outcome = "Fail";
+
+                if (maxScore > 0)
+                {
+                    float percentage = (float)score / maxScore * 100f;
+
+                    if (percentage >= 60f)
+                    {
+                        outcome = "Win";
+                    }
+                }
+
+                resultRecorder.Record(
+                    score,
+                    maxScore,
+                    outcome
+                );
+            }
+
             isWaitingForNextWave = false;
 
             if (resultsScreen != null)
@@ -577,5 +789,27 @@ public class WallSpawner : MonoBehaviour
     public void UnregisterWall(WallObstacle wall)
     {
         activeWalls.Remove(wall);
+    }
+
+    public void RecordDeathResult()
+    {
+        isSpawning = false;
+        StopAllCoroutines();
+
+        if (resultRecorder != null)
+        {
+            resultRecorder.Record(
+                score,
+                maxScore,
+                "Fail"
+            );
+        }
+        else
+        {
+            Debug.LogError(
+                "WallSpawner: Result Recorder is not assigned.",
+                this
+            );
+        }
     }
 }

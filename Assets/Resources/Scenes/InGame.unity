@@ -1831,6 +1831,7 @@ MonoBehaviour:
         m_CallState: 2
   cutsceneId: C1_Encounter
   progressMilestoneId: encounter_intro
+  progressionChapter: 1
 --- !u!1 &163149984
 GameObject:
   m_ObjectHideFlags: 0
@@ -3499,6 +3500,7 @@ MonoBehaviour:
         m_CallState: 2
   cutsceneId: C1_ReachedMapEnd
   progressMilestoneId: reached_map_end
+  progressionChapter: 1
 --- !u!82 &314433727
 AudioSource:
   m_ObjectHideFlags: 0
@@ -4850,6 +4852,7 @@ MonoBehaviour:
         m_CallState: 2
   cutsceneId: C1_AfterPretest
   progressMilestoneId: after_pretest
+  progressionChapter: 1
 --- !u!1 &355362201
 GameObject:
   m_ObjectHideFlags: 0
@@ -6318,6 +6321,7 @@ MonoBehaviour:
         m_CallState: 2
   cutsceneId: C1_TowerDefense_Win
   progressMilestoneId: tower_outcome
+  progressionChapter: 1
 --- !u!1 &444982869
 GameObject:
   m_ObjectHideFlags: 0
@@ -7330,6 +7334,7 @@ MonoBehaviour:
         m_CallState: 2
   cutsceneId: C1_Anyways
   progressMilestoneId: anyways
+  progressionChapter: 1
 --- !u!1 &491744387
 GameObject:
   m_ObjectHideFlags: 0
@@ -8061,6 +8066,7 @@ MonoBehaviour:
         m_CallState: 2
   cutsceneId: C1_AfterPosttest
   progressMilestoneId: after_posttest
+  progressionChapter: 1
 --- !u!1001 &518412746
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -12242,7 +12248,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c20bb6594570b9c488f7a45dc35eb1a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EncounterQuestionLoader
-  endpointUrl: http://localhost/explorer/get_encounter_questions.php
+  endpointUrl: http://localhost/Explorer/php%20stuffs/get_encounter_questions.php
   firstQuestionId: 1
   lastQuestionId: 20
   targetConsoles:
@@ -13979,6 +13985,7 @@ MonoBehaviour:
         m_CallState: 2
   cutsceneId: C1_Posttest_Good
   progressMilestoneId: posttest_outcome
+  progressionChapter: 1
 --- !u!1 &1113576402
 GameObject:
   m_ObjectHideFlags: 0
@@ -14328,6 +14335,7 @@ MonoBehaviour:
         m_CallState: 2
   cutsceneId: C1_Pretest_Good
   progressMilestoneId: pretest_outcome
+  progressionChapter: 1
 --- !u!1 &1116733237
 GameObject:
   m_ObjectHideFlags: 0
@@ -14487,6 +14495,7 @@ MonoBehaviour:
       m_Calls: []
   cutsceneId: C1_TowerDefense_Fail
   progressMilestoneId: tower_outcome
+  progressionChapter: 1
 --- !u!4 &1129614362
 Transform:
   m_ObjectHideFlags: 0
@@ -16276,6 +16285,7 @@ MonoBehaviour:
         m_CallState: 2
   cutsceneId: C1_Pretest_Bad
   progressMilestoneId: pretest_outcome
+  progressionChapter: 1
 --- !u!1 &1359420949
 GameObject:
   m_ObjectHideFlags: 0
@@ -17382,6 +17392,7 @@ MonoBehaviour:
         m_CallState: 2
   cutsceneId: C1_Posttest_Bad
   progressMilestoneId: posttest_outcome
+  progressionChapter: 1
 --- !u!1001 &1471557544
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -20124,6 +20135,7 @@ MonoBehaviour:
         m_CallState: 2
   cutsceneId: C1_Intro
   progressMilestoneId: intro
+  progressionChapter: 1
 --- !u!4 &1684355493
 Transform:
   m_ObjectHideFlags: 0

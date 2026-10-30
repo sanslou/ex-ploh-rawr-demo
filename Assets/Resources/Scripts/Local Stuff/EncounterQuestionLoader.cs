@@ -38,6 +38,7 @@ public class EncounterQuestionLoader : MonoBehaviour
     {
         public int id;
         public string question;
+        public string[] choices;
         public string answer;
     }
 
@@ -283,31 +284,10 @@ public class EncounterQuestionLoader : MonoBehaviour
 
     private List<QA> BuildMixedQuestions(QuestionRow[] rows)
     {
-        // Build a unique answer pool for incorrect choices.
-        List<string> answerPool = new List<string>();
-
-        HashSet<string> uniqueAnswers =
-            new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-
-        foreach (QuestionRow row in rows)
+        if (rows == null || rows.Length == 0)
         {
-            if (row == null ||
-                string.IsNullOrWhiteSpace(row.question) ||
-                string.IsNullOrWhiteSpace(row.answer))
-            {
-                Debug.LogError(
-                    "EncounterQuestionLoader: Empty question or answer."
-                );
-
-                return null;
-            }
-
-            string answer = row.answer.Trim();
-
-            if (uniqueAnswers.Add(answer))
-            {
-                answerPool.Add(answer);
-            }
+            Debug.LogError("EncounterQuestionLoader: No questions received.");
+            return null;
         }
 
         int multipleCount = Mathf.RoundToInt(rows.Length * 0.70f);
@@ -319,18 +299,7 @@ public class EncounterQuestionLoader : MonoBehaviour
 
         int identifyCount = rows.Length - multipleCount - triviaCount;
 
-        if (multipleCount > 0 && answerPool.Count < 4)
-        {
-            Debug.LogError(
-                "EncounterQuestionLoader: At least four different answers " +
-                "are needed to generate multiple-choice questions."
-            );
-
-            return null;
-        }
-    
-
-        // 0 = MultipleChoices, 1 = Trivia, 2 = Identify.
+        // 0 = multiple choice, 1 = true/false, 2 = identification.
         List<int> questionTypes = new List<int>();
 
         for (int i = 0; i < multipleCount; i++)
@@ -354,34 +323,94 @@ public class EncounterQuestionLoader : MonoBehaviour
 
         for (int i = 0; i < rows.Length; i++)
         {
-            string question = rows[i].question.Trim();
-            string correctAnswer = rows[i].answer.Trim();
+            QuestionRow row = rows[i];
 
+            if (row == null ||
+                string.IsNullOrWhiteSpace(row.question) ||
+                string.IsNullOrWhiteSpace(row.answer))
+            {
+                Debug.LogError(
+                    "EncounterQuestionLoader: Missing question or answer at row " + i
+                );
+                return null;
+            }
+
+            string question = row.question.Trim();
+            string correctAnswer = CleanAnswerText(row.answer);
+
+            // Identification only needs the question and correct answer.
+            if (questionTypes[i] == 2)
+            {
+                questions.Add(
+                    new Identify(question, correctAnswer, false)
+                );
+                continue;
+            }
+
+            if (row.choices == null || row.choices.Length != 4)
+            {
+                Debug.LogError(
+                    "Question ID " + row.id + ": Expected four database choices."
+                );
+                return null;
+            }
+
+            List<string> choices = new List<string>();
             List<string> wrongAnswers = new List<string>();
 
-            foreach (string candidate in answerPool)
+            HashSet<string> uniqueChoices =
+                new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+            bool answerFound = false;
+
+            foreach (string rawChoice in row.choices)
             {
-                if (!string.Equals(
-                    candidate,
+                string choice = CleanAnswerText(rawChoice);
+
+                if (string.IsNullOrWhiteSpace(choice))
+                {
+                    Debug.LogError(
+                        "Question ID " + row.id + ": An answer choice is empty."
+                    );
+                    return null;
+                }
+
+                if (!uniqueChoices.Add(choice))
+                {
+                    Debug.LogWarning(
+                        "Question ID " + row.id +
+                        ": Duplicate database choice: " + choice
+                    );
+                }
+
+                if (string.Equals(
+                    choice,
                     correctAnswer,
                     StringComparison.OrdinalIgnoreCase))
                 {
-                    wrongAnswers.Add(candidate);
+                    // Use identical text for matching and feedback.
+                    choice = correctAnswer;
+                    answerFound = true;
                 }
+                else
+                {
+                    wrongAnswers.Add(choice);
+                }
+
+                choices.Add(choice);
             }
 
-            ShuffleList(wrongAnswers);
+            if (!answerFound)
+            {
+                Debug.LogError(
+                    "Question ID " + row.id +
+                    ": Answer does not match any database choice."
+                );
+                return null;
+            }
 
             if (questionTypes[i] == 0)
             {
-                List<string> choices = new List<string>
-            {
-                correctAnswer,
-                wrongAnswers[0],
-                wrongAnswers[1],
-                wrongAnswers[2]
-            };
-
                 ShuffleList(choices);
 
                 int correctIndex = choices.IndexOf(correctAnswer);
@@ -394,22 +423,34 @@ public class EncounterQuestionLoader : MonoBehaviour
                     )
                 );
             }
-            else if (questionTypes[i] == 1)
-            {
-                string statement =
-                    question +
-                    "\n\nThe correct answer is: " +
-                    correctAnswer;
-
-                questions.Add(
-                    new Trivia(statement, true)
-                );
-            }
             else
             {
-                questions.Add(
-                    new Identify(question, correctAnswer, false)
-                );
+                if (wrongAnswers.Count == 0)
+                {
+                    Debug.LogError(
+                        "Question ID " + row.id +
+                        ": No incorrect choice available for true/false."
+                    );
+                    return null;
+                }
+
+                bool isTrue = UnityEngine.Random.Range(0, 2) == 0;
+                string proposedAnswer = correctAnswer;
+
+                if (!isTrue)
+                {
+                    int wrongIndex =
+                        UnityEngine.Random.Range(0, wrongAnswers.Count);
+
+                    proposedAnswer = wrongAnswers[wrongIndex];
+                }
+
+                string statement =
+                    question +
+                    "\n\nProposed answer: " + proposedAnswer +
+                    "\n\nIs the proposed answer correct?";
+
+                questions.Add(new Trivia(statement, isTrue));
             }
         }
 
@@ -421,6 +462,20 @@ public class EncounterQuestionLoader : MonoBehaviour
         );
 
         return questions;
+    }
+
+    private string CleanAnswerText(string value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return "";
+        }
+
+        return System.Text.RegularExpressions.Regex.Replace(
+            value.Trim(),
+            @"\s+",
+            " "
+        );
     }
 
     private void ShuffleList<T>(List<T> items)

@@ -964,6 +964,52 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 6156231565419180730, guid: 3cfa377db7d458441867b22d06ef99ef, type: 3}
   m_PrefabInstance: {fileID: 200752801}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &148451963
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 148451965}
+  - component: {fileID: 148451964}
+  m_Layer: 0
+  m_Name: MinigameManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &148451964
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 148451963}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7d9371e3d81b85144afbb12ecbe9d855, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
+  minigameId: TowerDefense
+  chapterId: 1
+--- !u!4 &148451965
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 148451963}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 599.9679, y: 182.81702, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &154006002 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 897548fcea747884ca753e6678a22cb7, type: 3}
@@ -4540,12 +4586,16 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5553244078423268715, guid: 20a65d7d096dda6459ad4f4948badec6, type: 3}
       propertyPath: numberOfWaves
-      value: 5
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 5553244078423268715, guid: 20a65d7d096dda6459ad4f4948badec6, type: 3}
       propertyPath: enemyWalkSpeed
       value: 1.5
       objectReference: {fileID: 0}
+    - target: {fileID: 5553244078423268715, guid: 20a65d7d096dda6459ad4f4948badec6, type: 3}
+      propertyPath: resultRecorder
+      value: 
+      objectReference: {fileID: 148451964}
     - target: {fileID: 5553244078423268715, guid: 20a65d7d096dda6459ad4f4948badec6, type: 3}
       propertyPath: towerMaxHealth
       value: 100
@@ -8082,8 +8132,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f8298c4ef2d82834e9069b61abb6c048, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Pause
-  pauseMenuUI: {fileID: 0}
-  playerUI: {fileID: 0}
 --- !u!114 &1702586619
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9662,3 +9710,4 @@ SceneRoots:
   - {fileID: 1192358368}
   - {fileID: 238183859}
   - {fileID: 798329671}
+  - {fileID: 148451965}

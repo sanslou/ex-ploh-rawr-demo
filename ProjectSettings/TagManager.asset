@@ -21,6 +21,8 @@ TagManager:
   - Inv_Wall
   - Tower
   - Canvas_Cutscene
+  - Battleground
+  - Enemy_TD
   layers:
   - Default
   - TransparentFX

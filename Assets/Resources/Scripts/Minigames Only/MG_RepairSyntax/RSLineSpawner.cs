@@ -12,10 +12,7 @@ public class RSLineSpawner : MonoBehaviour
     private List<GameObject> spawnedLines = new List<GameObject>(); // Lists every code line currently in the world, so they can be despawned later
 
 
-    private void Start()
-    {
-        SpawnCodeLines();
-    }
+    
 
     public void DespawnCodeLines() // Destroys every code line this spawner made
     {

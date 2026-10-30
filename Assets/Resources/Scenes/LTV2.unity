@@ -23102,6 +23102,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: SlideshowUI
       objectReference: {fileID: 0}
+    - target: {fileID: 4690076062709309151, guid: 02a606026609d164e898a8b9a02032c3, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6161368707633457151, guid: 02a606026609d164e898a8b9a02032c3, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
       value: 0

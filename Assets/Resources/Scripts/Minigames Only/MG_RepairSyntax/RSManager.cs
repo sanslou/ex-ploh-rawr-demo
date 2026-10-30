@@ -3,10 +3,199 @@ using TMPro;
 using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
-
+using UnityEngine.Networking;
 public class RSManager : MonoBehaviour
 {
     // Note: This class is responsible for the Repair Syntax minigame's flow: the timer, the time penalty, loading each challenge one after another, and when the results show up.
+
+    [System.Serializable]
+    private class DatabaseChallenge
+    {
+        public int id;
+        public string Name;
+        public List<RepairSyntaxWave> waves;
+    }
+
+    [System.Serializable]
+    private class RepairContentResponse
+    {
+        public bool success;
+        public string message;
+        public DatabaseChallenge[] challenges;
+    }
+
+    private readonly List<RepairSyntaxData> runtimeChallenges =
+        new List<RepairSyntaxData>();
+
+    private IEnumerator Start()
+    {
+        timerRunning = false;
+
+        string host = "localhost";
+
+        if (!string.IsNullOrWhiteSpace(DBC.IP_ADDRESS))
+        {
+            host = DBC.IP_ADDRESS.Trim();
+        }
+
+        string url =
+            "http://" + host +
+            "/Explorer/php%20stuffs/get_repair_syntax_content.php" +
+            "?chapter=" + assessmentChapter;
+
+        using (UnityWebRequest request = UnityWebRequest.Get(url))
+        {
+            request.timeout = 20;
+
+            yield return request.SendWebRequest();
+
+            if (request.result != UnityWebRequest.Result.Success)
+            {
+                Debug.LogError(
+                    "Repair Syntax download failed: " +
+                    request.error + "\n" +
+                    request.downloadHandler.text,
+                    this
+                );
+                yield break;
+            }
+
+            RepairContentResponse response = null;
+
+            try
+            {
+                response = JsonUtility.FromJson<RepairContentResponse>(
+                    request.downloadHandler.text
+                );
+            }
+            catch (System.Exception error)
+            {
+                Debug.LogError(
+                    "Repair Syntax: Invalid JSON: " + error.Message,
+                    this
+                );
+            }
+
+            if (response == null ||
+                !response.success ||
+                response.challenges == null ||
+                response.challenges.Length == 0)
+            {
+                Debug.LogError(
+                    "Repair Syntax: No usable database challenges received.",
+                    this
+                );
+                yield break;
+            }
+
+            foreach (DatabaseChallenge row in response.challenges)
+            {
+                if (!ValidateDatabaseChallenge(row))
+                {
+                    Debug.LogError(
+                        "Repair Syntax: Invalid challenge content. Game blocked.",
+                        this
+                    );
+                    yield break;
+                }
+
+                RepairSyntaxData data =
+                    ScriptableObject.CreateInstance<RepairSyntaxData>();
+
+                data.name = "Database_RS_" + row.id;
+                data.Name = row.Name;
+                data.waves = row.waves;
+
+                runtimeChallenges.Add(data);
+            }
+        }
+
+        challengeData = runtimeChallenges.ToArray();
+
+        buildChallengeOrder();
+        InitializeLoadedGame();
+
+        Debug.Log(
+            "Repair Syntax: Loaded " + challengeData.Length +
+            " database challenges.",
+            this
+        );
+    }
+
+    private bool ValidateDatabaseChallenge(DatabaseChallenge row)
+    {
+        if (row == null ||
+            string.IsNullOrWhiteSpace(row.Name) ||
+            row.waves == null ||
+            row.waves.Count != 1)
+        {
+            return false;
+        }
+
+        RepairSyntaxWave wave = row.waves[0];
+
+        if (wave == null ||
+            wave.codeLines == null ||
+            wave.codeLines.Count == 0)
+        {
+            return false;
+        }
+
+        int errorCount = 0;
+
+        foreach (RepairSyntaxLineData line in wave.codeLines)
+        {
+            if (line == null ||
+                string.IsNullOrWhiteSpace(line.originalCode))
+            {
+                return false;
+            }
+
+            if (!line.hasSyntaxError)
+            {
+                continue;
+            }
+
+            errorCount++;
+
+            if (string.IsNullOrWhiteSpace(line.brokenCode) ||
+                string.IsNullOrWhiteSpace(line.incorrectToken) ||
+                string.IsNullOrWhiteSpace(line.correctAnswer) ||
+                line.tokenChoices == null ||
+                line.tokenChoices.Count == 0 ||
+                line.tokenChoices.Count > 4 ||
+                !line.tokenChoices.Contains(line.incorrectToken) ||
+                !line.brokenCode.Contains(line.incorrectToken) ||
+                line.incorrectToken == line.correctAnswer)
+            {
+                return false;
+            }
+
+            foreach (string token in line.tokenChoices)
+            {
+                if (string.IsNullOrWhiteSpace(token))
+                {
+                    return false;
+                }
+            }
+        }
+
+        return errorCount > 0;
+    }
+
+    private void OnDestroy()
+    {
+        foreach (RepairSyntaxData data in runtimeChallenges)
+        {
+            if (data != null)
+            {
+                Destroy(data);
+            }
+        }
+    }
+
+    [Header("Result Recording")]
+    [SerializeField] private MinigameResultRecorder resultRecorder;
 
     [Header("Challenge Data")]
     [SerializeField] private RepairSyntaxData[] challengeData;
@@ -87,7 +276,6 @@ public class RSManager : MonoBehaviour
     {
         ApplyAdaptiveDifficulty();
         // 1. Build the play order here, because RSLineSpawner reads CurrentWave in its own Start
-        buildChallengeOrder();
 
         if (timerUI == null)
         {
@@ -108,7 +296,7 @@ public class RSManager : MonoBehaviour
         }
     }
 
-    void Start()
+    private void InitializeLoadedGame()
     {
         // 1. Make sure there is a valid challenge to play
         if (ChallengeData == null)
@@ -156,6 +344,17 @@ public class RSManager : MonoBehaviour
         if (!countSyntaxErrors())
             return;
 
+        if (lineSpawner == null || resultsUI == null)
+        {
+            Debug.LogError(
+                "Repair Syntax cannot start: spawner or results UI is missing.",
+                this
+            );
+            return;
+        }
+
+        lineSpawner.SpawnCodeLines();
+
         // 5. Start the timer
         remainingTime = Mathf.Max(0f, startingTimeSeconds);
         timerRunning = remainingTime > 0f;
@@ -177,6 +376,14 @@ public class RSManager : MonoBehaviour
 
             if (resultsUI != null)
             {
+                if (resultRecorder != null)
+                {
+                    resultRecorder.Record(
+                        allRepairedCount,
+                        allSyntaxErrors,
+                        "Fail"
+                    );
+                }
                 resultsUI.TimeRanOut();
                 resultsShown = true;
             }
@@ -311,6 +518,14 @@ public class RSManager : MonoBehaviour
 
             if (resultsUI != null)
             {
+                if (resultRecorder != null)
+                {
+                    resultRecorder.Record(
+                        allRepairedCount,
+                        allSyntaxErrors,
+                        "Fail"
+                    );
+                }
                 resultsUI.TimeRanOut();
                 resultsShown = true;
             }
@@ -342,6 +557,15 @@ public class RSManager : MonoBehaviour
         // 2. That was the last challenge, so stop the timer and show the results
         resultsShown = true;
         timerRunning = false;
+
+        if (resultRecorder != null)
+        {
+            resultRecorder.Record(
+                allRepairedCount,
+                allSyntaxErrors,
+                "Win"
+            );
+        }
 
         // WINNING CONDITIONS
         if (resultsUI != null)

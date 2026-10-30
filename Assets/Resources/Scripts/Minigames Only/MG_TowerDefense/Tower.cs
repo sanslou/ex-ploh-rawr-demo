@@ -10,6 +10,8 @@ public class Tower : MonoBehaviour
     // This class is responsible for the tower and its properties, as well as enemy spawn properties.
     public bool isOngoing = true;
     [SerializeField] private bool gameOver = false;
+    [Header("Result Recording")]
+    [SerializeField] private MinigameResultRecorder resultRecorder;
 
     [Header("Tower Properties")]
     [Tooltip("Tower's health in float values")]
@@ -132,9 +134,9 @@ public class Tower : MonoBehaviour
             //Debug.Log("Spawn location: " + child.name);
         }
         enemy = Resources.Load<GameObject>("Prefabs/Minigames Only/Evil Bun");
-        
+
         ApplyAdaptiveDifficulty();
-        StartCoroutine(Loop()); // 1. Initiate loop that continuously spawns enemies every x seconds
+        StartCoroutine(WaitForContentAndStart());
     }
 
     private void Update()
@@ -145,6 +147,33 @@ public class Tower : MonoBehaviour
         }
     }
 
+    private IEnumerator WaitForContentAndStart()
+    {
+        if (nametagScript == null)
+        {
+            Debug.LogError("Tower: NametagManager is missing.", this);
+            isOngoing = false;
+            yield break;
+        }
+
+        yield return new WaitUntil(
+            () => nametagScript.IsLoaded || nametagScript.LoadFailed
+        );
+
+        if (nametagScript.LoadFailed)
+        {
+            isOngoing = false;
+
+            Debug.LogError(
+                "Tower Defense cannot start: content failed to load.",
+                this
+            );
+
+            yield break;
+        }
+
+        StartCoroutine(Loop());
+    }
     private void ApplyAdaptiveDifficulty()
     {
         int difficulty = Chapter1Difficulty.GetDifficulty();
@@ -375,6 +404,22 @@ public class Tower : MonoBehaviour
     private void DisplayFinalScore(bool failed = false)
     {
         int maxScore = Mathf.Max(1, totalHostileSpawned);
+
+        if (resultRecorder != null)
+        {
+            string outcome = "Win";
+
+            if (failed)
+            {
+                outcome = "Fail";
+            }
+
+            resultRecorder.Record(
+                hostileEnemiesSlain,
+                maxScore,
+                outcome
+            );
+        }
 
         resultScript.displayResults(hostileEnemiesSlain,maxScore,failed);
 

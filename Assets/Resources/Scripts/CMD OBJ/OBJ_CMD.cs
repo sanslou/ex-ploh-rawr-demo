@@ -6,6 +6,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
+using UnityEngine.Networking;
 
 public class OBJ_CMD : NPC
 {
@@ -183,6 +184,87 @@ public class OBJ_CMD : NPC
         };
     }
 
+    [System.Serializable]
+    private class AssessmentUploadResponse
+    {
+        public bool success;
+        public string message;
+    }
+
+    private IEnumerator UploadAssessment(string json)
+    {
+        string host = "localhost";
+
+        if (!string.IsNullOrWhiteSpace(DBC.IP_ADDRESS))
+        {
+            host = DBC.IP_ADDRESS.Trim();
+        }
+
+        string url =
+            "http://" + host +
+            "/Explorer/php%20stuffs/save_assessment_result.php";
+
+        using (UnityWebRequest request =
+            new UnityWebRequest(url, "POST"))
+        {
+            request.uploadHandler = new UploadHandlerRaw(
+                System.Text.Encoding.UTF8.GetBytes(json)
+            );
+
+            request.downloadHandler = new DownloadHandlerBuffer();
+            request.SetRequestHeader("Content-Type", "application/json");
+            request.timeout = 20;
+
+            yield return request.SendWebRequest();
+
+            if (request.result != UnityWebRequest.Result.Success)
+            {
+                Debug.LogWarning(
+                    "Assessment upload failed. Local history is preserved." +
+                    "\nError: " + request.error +
+                    "\nResponse: " + request.downloadHandler.text,
+                    this
+                );
+
+                yield break;
+            }
+
+            AssessmentUploadResponse response = null;
+
+            try
+            {
+                response =
+                    JsonUtility.FromJson<AssessmentUploadResponse>(
+                        request.downloadHandler.text
+                    );
+            }
+            catch (System.Exception)
+            {
+                Debug.LogWarning(
+                    "Assessment server returned invalid JSON. " +
+                    "Local history is preserved.",
+                    this
+                );
+            }
+
+            if (response == null || !response.success)
+            {
+                Debug.LogWarning(
+                    "Assessment server did not confirm saving." +
+                    "\nResponse: " + request.downloadHandler.text,
+                    this
+                );
+
+                yield break;
+            }
+
+            Debug.Log(
+                "ASSESSMENT DATABASE: " + response.message,
+                this
+            );
+        }
+    }
+
     private void FinishEncounterRecord()
     {
         if (currentEncounterRecord == null)
@@ -217,6 +299,7 @@ public class OBJ_CMD : NPC
         //currentEncounterRecord = null;
         if (SaveAssessmentLocally(currentEncounterRecord))
         {
+            StartCoroutine(UploadAssessment(json));
             currentEncounterRecord = null;
         }
         else

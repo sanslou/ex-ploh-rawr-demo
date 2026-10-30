@@ -632,7 +632,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   isEntity: 1
+  canSkip: 0
+  isModel: 0
   npcSprite: {fileID: 0}
+  animatorController: {fileID: 0}
   animator: {fileID: 0}
 --- !u!114 &2999557938690028977
 MonoBehaviour:
@@ -647,7 +650,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   isEntity: 0
+  canSkip: 0
+  isModel: 0
   npcSprite: {fileID: 0}
+  animatorController: {fileID: 0}
   animator: {fileID: 0}
   target: {fileID: 0}
   tower: {fileID: 0}
