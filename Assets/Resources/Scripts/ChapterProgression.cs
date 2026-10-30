@@ -88,11 +88,23 @@ public static class ChapterProgression
 
         if (PlayerPrefs.GetInt(key, 0) == 1)
         {
+            ChapterProgressSync.Submit(
+                profile,
+                chapter,
+                GetPercentage(profile, chapter)
+            );
+
             return;
         }
 
         PlayerPrefs.SetInt(key, 1);
         PlayerPrefs.Save();
+
+        ChapterProgressSync.Submit(
+    profile,
+    chapter,
+    GetPercentage(profile, chapter)
+);
 
         Debug.Log(
             "Chapter " + chapter + " progression: " +

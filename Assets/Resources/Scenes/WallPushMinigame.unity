@@ -4022,7 +4022,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 0146db673b099a0489115c43dcd0b268, type: 2}
   - {fileID: 11400000, guid: 1069214fb7d3583428fd37486e6edb67, type: 2}
   loadWavesFromResources: 1
-  numberOfWaves: 10
+  numberOfWaves: 7
   questionText: {fileID: 1607118452}
   waveText: {fileID: 1515529861}
   useAdaptiveDifficulty: 1
