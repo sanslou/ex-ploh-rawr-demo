@@ -431,71 +431,163 @@ public class OBJ_CMD : NPC
 
     public void ChooseOneREConsole()
     {
-        // Gather consoles in the scene's hierarchy order.
-        Debug.Log("RE: ChooseOneREConsole called.", this);
-        if (encounterConsoles.Count == 0)
+        if (IsQuizOngoing)
         {
-            GameObject[] roots = gameObject.scene.GetRootGameObjects();
-
-            System.Array.Sort(
-                roots,
-                (a, b) => a.transform.GetSiblingIndex()
-                    .CompareTo(b.transform.GetSiblingIndex())
-            );
-
-            foreach (GameObject root in roots)
-            {
-                OBJ_CMD[] consoles = root.GetComponentsInChildren<OBJ_CMD>(true);
-
-                foreach (OBJ_CMD console in consoles)
-                {
-                    if (console.quizType == QuizType.RandomEncounter)
-                    {
-                        encounterConsoles.Add(console);
-                    }
-                }
-            }
-
-            nextConsoleIndex = 0;
-        }
-
-        // Remove any consoles destroyed since the previous encounter.
-        for (int i = encounterConsoles.Count - 1; i >= 0; i--)
-        {
-            if (encounterConsoles[i] == null)
-            {
-                encounterConsoles.RemoveAt(i);
-
-                if (i < nextConsoleIndex)
-                {
-                    nextConsoleIndex--;
-                }
-            }
-        }
-
-        if (encounterConsoles.Count == 0)
-        {
-            Debug.LogWarning("No random encounter consoles found in this scene.");
             return;
         }
 
-        // All consoles used: shuffle before starting another round.
-        if (nextConsoleIndex >= encounterConsoles.Count)
+        // Read completed encounters for the current student.
+        HashSet<string> completedEncounters = new HashSet<string>();
+
+        string studentId =
+            PlayerPrefs.GetString("AccountID", "").Trim();
+
+        bool studentMode =
+            !DBC.IS_GUEST_MODE &&
+            !string.IsNullOrEmpty(studentId);
+
+        if (studentMode)
         {
-            ShuffleREConsoles();
-            nextConsoleIndex = 0;
+            string historyKey =
+                "EXplorer_AssessmentHistory_v1_" +
+                System.Uri.EscapeDataString(studentId);
+
+            if (PlayerPrefs.HasKey(historyKey))
+            {
+                try
+                {
+                    AssessmentHistory history =
+                        JsonUtility.FromJson<AssessmentHistory>(
+                            PlayerPrefs.GetString(historyKey)
+                        );
+
+                    if (history == null || history.attempts == null)
+                    {
+                        Debug.LogError(
+                            "RE: Saved assessment history is invalid.",
+                            this
+                        );
+                        return;
+                    }
+
+                    foreach (RandomEncounterScoreRecord attempt
+                        in history.attempts)
+                    {
+                        if (attempt == null)
+                        {
+                            continue;
+                        }
+
+                        if (attempt.student_id == studentId &&
+                            attempt.quiz_type ==
+                                QuizType.RandomEncounter.ToString() &&
+                            attempt.total_questions > 0 &&
+                            !string.IsNullOrWhiteSpace(
+                                attempt.encounter_id))
+                        {
+                            completedEncounters.Add(
+                                attempt.chapter_id + ":" +
+                                attempt.encounter_id.Trim()
+                            );
+                        }
+                    }
+                }
+                catch (System.Exception error)
+                {
+                    Debug.LogError(
+                        "RE: Cannot read assessment history: " +
+                        error.Message,
+                        this
+                    );
+                    return;
+                }
+            }
         }
 
-        OBJ_CMD selectedConsole = encounterConsoles[nextConsoleIndex];
-        nextConsoleIndex++;
+        List<OBJ_CMD> unfinished = new List<OBJ_CMD>();
+        List<OBJ_CMD> allConsoles = new List<OBJ_CMD>();
+
+        GameObject[] roots =
+            gameObject.scene.GetRootGameObjects();
+
+        foreach (GameObject root in roots)
+        {
+            OBJ_CMD[] consoles =
+                root.GetComponentsInChildren<OBJ_CMD>(true);
+
+            foreach (OBJ_CMD console in consoles)
+            {
+                if (console.quizType != QuizType.RandomEncounter)
+                {
+                    continue;
+                }
+
+                allConsoles.Add(console);
+
+                bool completed = false;
+
+                if (studentMode)
+                {
+                    string completionId =
+                        console.flashcardChapter + ":" +
+                        (console.encounterId ?? "").Trim();
+
+                    completed =
+                        completedEncounters.Contains(completionId);
+                }
+                else
+                {
+                    completed = PlayerPrefs.GetInt(
+                        console.GetQuizSaveKey(), 0
+                    ) == 1;
+                }
+
+                if (!completed)
+                {
+                    unfinished.Add(console);
+                }
+            }
+        }
+
+        // Prioritize unfinished consoles.
+        List<OBJ_CMD> candidates = allConsoles;
+
+        if (unfinished.Count > 0)
+        {
+            candidates = unfinished;
+        }
+
+        List<OBJ_CMD> readyConsoles = new List<OBJ_CMD>();
+
+        foreach (OBJ_CMD console in candidates)
+        {
+            if (console.QuestionsReady &&
+                console.QAs != null &&
+                console.QAs.Count > 0)
+            {
+                readyConsoles.Add(console);
+            }
+        }
+
+        if (readyConsoles.Count == 0)
+        {
+            Debug.LogWarning(
+                "RE: No eligible consoles have loaded questions.",
+                this
+            );
+            return;
+        }
+
+        OBJ_CMD selectedConsole = readyConsoles[
+            Random.Range(0, readyConsoles.Count)
+        ];
 
         Debug.Log(
-    "RE: Selected " + selectedConsole.name +
-    " | Active: " + selectedConsole.gameObject.activeInHierarchy +
-    " | QuestionsReady: " + selectedConsole.QuestionsReady +
-    " | Question count: " + selectedConsole.QAs.Count,
-    selectedConsole
-);
+            "RE: Selected " + selectedConsole.name +
+            " | Encounter ID: " + selectedConsole.encounterId +
+            " | Unfinished consoles: " + unfinished.Count,
+            selectedConsole
+        );
 
         selectedConsole.Interact();
     }
